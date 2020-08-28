@@ -1,0 +1,10 @@
+.screen {
+	background-color: rgb(167, 221, 208);
+	min-height: 150px;
+}
+.list {
+	list-style: none;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-around;
+}

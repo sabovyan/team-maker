@@ -1,26 +1,48 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
+import Input from './components/Input/Input';
+import Form from './components/Form/Form';
+import Screen from './components/Screen/Screen';
+import styles from './App.module.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+	constructor(props) {
+		super(props);
+	}
+	render() {
+		return (
+			<div>
+				<h1>te|am</h1>
+				<Screen>
+					<li className={styles.list__item}>
+						<span className={styles.list__player}>hello</span>
+						<span className={styles.player__delete}>X</span>
+					</li>
+					<li className={styles.list__item}>
+						<span className={styles.list__player}>hello</span>
+						<span className={styles.player__delete}>X</span>
+					</li>
+					<li className={styles.list__item}>
+						<span className={styles.list__player}>hello</span>
+						<span className={styles.player__delete}>X</span>
+					</li>
+					<li className={styles.list__item}>
+						<span className={styles.list__player}>hello</span>
+						<span className={styles.player__delete}>X</span>
+					</li>
+					<li className={styles.list__item}>
+						<span className={styles.list__player}>hello</span>
+						<span className={styles.player__delete}>X</span>
+					</li>
+					<li className={styles.list__item}>
+						<span className={styles.list__player}>hello</span>
+						<span className={styles.player__delete}>X</span>
+					</li>
+				</Screen>
+				<Form>
+					<Input />
+				</Form>
+			</div>
+		);
+	}
 }
-
 export default App;
