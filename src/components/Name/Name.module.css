@@ -1,5 +1,5 @@
 .list__item {
-	min-width: 150px;
+	/* min-width: 150px; */
 	border: 1px solid #70c2c2;
 	display: flex;
 	justify-content: space-between;
@@ -14,12 +14,9 @@
 	width: 25px;
 	height: 25px;
 	text-align: center;
-	border: 1px solid transparent;
 }
 
 .player__icon:hover {
 	cursor: pointer;
-	font-weight: bolder;
 	color: red;
-	border-radius: 50%;
 }
