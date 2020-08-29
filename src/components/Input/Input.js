@@ -6,9 +6,12 @@ export default function Input(props) {
 		<section className={styles.form__section}>
 			<label>{props.labelName}</label>
 			<input
+				autoFocus={props.autoFocus}
 				className={styles.input}
 				onChange={props.onChange}
+				onBlur={props.onBlur}
 				type={props.type}
+				value={props.value}
 			/>
 		</section>
 	);
