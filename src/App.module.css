@@ -1,7 +1,44 @@
+.app {
+	display: flex;
+	flex-wrap: wrap;
+	margin: 1rem;
+}
+.names {
+	width: 100%;
+	margin: 0 10px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+/* TODO clean it or keep it  */
+.form {
+	width: 100%;
+	margin: 20px;
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-end;
+}
+
 .list__item {
 	width: 120px;
-	border: 1px solid red;
+	border: 1px solid #70c2c2;
 	display: flex;
-	justify-content: space-around;
+	justify-content: space-between;
 	border-radius: 5px;
+	padding: 5px;
+	margin: 5px;
+}
+.player__delete {
+	color: #70c2c2;
+	line-height: 16px;
+	font-size: 1.3rem;
+	width: 25px;
+	height: 25px;
+	text-align: center;
+	border: 1px solid transparent;
+}
+.player__delete:hover {
+	cursor: pointer;
+	border: 1px solid #70c2c2;
+	border-radius: 50%;
 }

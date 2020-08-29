@@ -1,6 +1,7 @@
 .screen {
-	background-color: rgb(167, 221, 208);
+	border: 2px solid rgb(35, 102, 86);
 	min-height: 150px;
+	border-radius: 10px;
 }
 .list {
 	list-style: none;

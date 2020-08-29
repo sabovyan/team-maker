@@ -1,13 +1,14 @@
 import React from 'react';
+import styles from './Input.module.css';
 
 export default function Input(props) {
 	return (
-		<section>
-			<label>players</label>
+		<section className={styles.form__section}>
+			<label>{props.labelName}</label>
 			<input
+				className={styles.input}
 				onChange={props.onChange}
-				type="text"
-				placeholder="enter names of players"
+				type={props.type}
 			/>
 		</section>
 	);
