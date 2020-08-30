@@ -5,6 +5,7 @@ import Screen from "./components/Screen/Screen";
 import Button from "./components/Button/Button";
 import Players from "./components/Players/Players";
 import Checkbox from "./components/Checkbox/Checkbox";
+import Result from "./components/Result/Result";
 
 import styles from "./App.module.css";
 
@@ -155,6 +156,7 @@ class App extends Component {
         shuffledNames: this.state.players
           .slice()
           .sort(() => Math.random() - 0.5),
+        shuffledIsReady: true,
       });
     } catch (err) {
       alert(err.message);
@@ -163,6 +165,7 @@ class App extends Component {
 
   render() {
     const { players, nameValue, trackerIsChecked } = this.state;
+    console.log(this.state.shuffledNames);
 
     return (
       <>
@@ -189,7 +192,7 @@ class App extends Component {
               />
             </Form>
           </div>
-          <h2>Submit the number of the team </h2>
+          {/*  <h2>Submit the number of the team </h2>
           <Form onSubmit={this.handleNumberSubmit} style={styles.form}>
             <Input
               onChange={this.handleNumberOfTeamsInput}
@@ -204,7 +207,7 @@ class App extends Component {
               checked={trackerIsChecked}
             />
             <Button type="submit" buttonText="Submit" />
-          </Form>
+          </Form> */}
         </div>
       </>
     );
