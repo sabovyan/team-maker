@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import COLORS from '../../constants/colors.constants';
 /* redux */
 import { useDispatch } from 'react-redux';
 import {
@@ -9,7 +10,6 @@ import {
 /* UI */
 import Chip from '@material-ui/core/Chip';
 import FaceIcon from '@material-ui/icons/Face';
-import COLORS from '../../constants/colors.constants';
 
 function Player({ player: { id, name, color } }) {
   const [selectedColor, setSelectedColor] = useState('blue');

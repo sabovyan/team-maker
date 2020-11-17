@@ -2,7 +2,8 @@
   width: 100%;
   display: flex;
   justify-content: flex-start;
-  align-items: center;
+  align-items: flex-start;
+  flex-direction: column;
 }
 @media screen and (max-width: 600px) {
   .root {
