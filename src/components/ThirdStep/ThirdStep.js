@@ -1,10 +1,12 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
+import { useHistory } from 'react-router-dom';
 
 /* redux */
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getPrevStep } from '../../store/features/stepCounter.feature';
+import FormTeamBoard from '../FormTeamBoard/FormTeamBoard';
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -17,21 +19,30 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function ThirdStep() {
+  const { players, numberOfGroups } = useSelector((state) => state);
   const classes = useStyles();
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const handleBack = () => {
     dispatch(getPrevStep());
   };
 
+  const shuffledPlayers = (players) => {
+    const input = [...players];
+    const output = input.sort(() => Math.random() - 0.5);
+    return output;
+  };
+
   const handleFinish = () => {
-    // dispatch(getNextStep());
+    const orderedPlayers = shuffledPlayers(players);
+    // dispatch(setInitialState({ players: orderedPlayers, numberOfGroups }));
+    history.push('/split');
   };
   return (
     <>
-      <h3>there</h3>
-
       <div className={classes.actionsContainer}>
+        <FormTeamBoard />
         <div>
           <Button onClick={handleBack} className={classes.button}>
             Back
@@ -42,7 +53,7 @@ function ThirdStep() {
             onClick={handleFinish}
             className={classes.button}
           >
-            Finish
+            Submit
           </Button>
         </div>
       </div>

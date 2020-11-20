@@ -30,14 +30,17 @@ const { actions, reducer } = createSlice({
   ],
   reducers: {
     addPlayer: (state, { payload }) => [...state, payload],
+
     removePlayer: (state, { payload }) =>
       state.filter((player) => player.id !== payload),
+
     setEditStatus: (state, { payload }) =>
       state.map((player) =>
         player.id === payload
           ? { ...player, isEdit: !player.isEdit, draft: player.name }
           : player
       ),
+
     setPlayerFormSubmit: (state, { payload }) => {
       return state.map((player) => {
         if (player.id === payload) {
@@ -51,6 +54,7 @@ const { actions, reducer } = createSlice({
         }
       });
     },
+
     SetDraftValueChange: (state, { payload }) =>
       state.map((player) =>
         player.id === payload.id ? { ...player, draft: payload.value } : player

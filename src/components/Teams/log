@@ -1,0 +1,31 @@
+/t/e/a/m/
+
+
+player: [...].shuffledPlayers(),
+numberOfGroups: 4,
+teams: Array(numberOfGroups).fill([])
+
+
+
+
+
+addPlayerToTeam() {
+
+baseCase
+  
+
+
+ take the player
+
+ insert into the first numberOfGroups
+
+ switch to the next team
+
+
+}
+
+teams[random].push(player)
+
+players.pop()
+
+

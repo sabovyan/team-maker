@@ -10,9 +10,25 @@ import {
 /* UI */
 import Chip from '@material-ui/core/Chip';
 import FaceIcon from '@material-ui/icons/Face';
+import { makeStyles } from '@material-ui/core';
 
-function Player({ player: { id, name, color } }) {
+const useStyles = makeStyles({
+  root: {
+    color: 'white',
+    height: 36,
+    padding: 5,
+    margin: '5px 0',
+    fontSize: '1rem',
+
+    '& .MuiChip-deleteIcon': {
+      fill: 'white',
+    },
+  },
+});
+
+function Player({ player: { id, name } }) {
   const [selectedColor, setSelectedColor] = useState('blue');
+  const classes = useStyles();
 
   const dispatch = useDispatch();
 
@@ -30,24 +46,26 @@ function Player({ player: { id, name, color } }) {
   };
 
   useEffect(() => {
-    getRandomColor(COLORS, setSelectedColor);
+    getRandomColor(COLORS);
   }, []);
 
   return (
     <li>
       <Chip
+        className={classes.root}
         size="small"
-        icon={<FaceIcon />}
+        icon={
+          <FaceIcon
+            style={{
+              color: 'white',
+            }}
+          />
+        }
         label={name}
         onDelete={handleDelete(id)}
         onClick={handleEditStatus(id)}
-        color="primary"
         style={{
           backgroundColor: selectedColor,
-          height: 36,
-          padding: 5,
-          margin: '5px 0',
-          fontSize: '1rem',
         }}
       />
     </li>

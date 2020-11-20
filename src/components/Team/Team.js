@@ -1,11 +1,24 @@
-import React from "react";
+import React from 'react';
+import { Typography } from '@material-ui/core';
 
-function Team(props) {
+function Team({ label, team }) {
   return (
-    <div>
-      <h2>Team {props.number}</h2>
-      <div>{props.childen}</div>
+    <div
+      style={{
+        background: 'lightblue',
+        padding: 10,
+      }}
+    >
+      <Typography component="h2" variant="h4" align="center">
+        {label}
+      </Typography>
+      <ul>
+        {team.map((player, idx) => (
+          <li key={player.name}>{player.name}</li>
+        ))}
+      </ul>
     </div>
   );
 }
+
 export default Team;

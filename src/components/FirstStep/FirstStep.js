@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
+import generateNewId from '../../utils/generateNewId';
 import Form from '../Form/Form';
 import Screen from '../Screen/Screen';
 import { Button, makeStyles, TextField } from '@material-ui/core';
 
 /* redux */
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addPlayer } from '../../store/features/players.feature';
 import { getNextStep } from '../../store/features/stepCounter.feature';
+import { setError } from '../../store/features/Error.feature';
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -18,20 +20,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function generateNewId() {
-  let id = 0;
-  return () => {
-    id += 1;
-    return id;
-  };
-}
-
 const newId = generateNewId();
 
 function FirstStep() {
   const classes = useStyles();
-  const [player, setPlayer] = useState('');
   const dispatch = useDispatch();
+  const players = useSelector((state) => state.players);
+
+  const [player, setPlayer] = useState('');
 
   const handlePlayerInput = ({ target: { value } }) => {
     setPlayer(value);
@@ -51,7 +47,15 @@ function FirstStep() {
   };
 
   const handleNext = () => {
-    dispatch(getNextStep());
+    try {
+      if (!players.length) {
+        throw new Error('🐵 please add some players');
+      }
+
+      dispatch(getNextStep());
+    } catch (error) {
+      dispatch(setError(error.message));
+    }
   };
 
   return (

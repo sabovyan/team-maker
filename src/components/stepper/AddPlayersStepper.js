@@ -17,10 +17,11 @@ import ThirdStep from '../ThirdStep/ThirdStep';
 import styles from './Stepper.module.css';
 
 export default function AddPlayersStepper() {
-  const activeStep = useSelector((state) => state.activeStep);
+  const { activeStep, error } = useSelector((state) => state);
 
   return (
     <div className={styles.root}>
+      <div style={{ color: 'red', height: 20 }}>{error}</div>
       <Stepper activeStep={activeStep} orientation="vertical">
         <Step>
           <StepLabel>Add players</StepLabel>
