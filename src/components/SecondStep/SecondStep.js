@@ -8,79 +8,115 @@ import { makeStyles } from '@material-ui/core/styles';
 import FormTeamBoard from '../FormTeamBoard/FormTeamBoard';
 
 /* redux */
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   getNextStep,
   getPrevStep,
 } from '../../store/features/stepCounter.feature';
 import { setError } from '../../store/features/Error.feature';
-import { addNumberOfGroups } from '../../store/features/teams.feature';
+import {
+  addNumberOfGroups,
+  decreaseNumberOfGroupsByOne,
+  increaseNumberOfGroupsByOne,
+} from '../../store/features/teams.feature';
+import { IconButton, Slider, Typography } from '@material-ui/core';
+import { ArrowBack, ArrowForward } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
-  button: {
-    marginTop: theme.spacing(1),
-    marginRight: theme.spacing(1),
+  sliderWrapper: {
+    width: '100%',
+    display: 'flex',
+
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxShadow: '0.1px 0.1px 1px #9494948f, -0.1px -0.1px 1px #9494948f',
+    transition: 'box-shadow 0.1s ease-in-out',
+    borderRadius: 8,
+    padding: 8,
+
+    '&:hover': {
+      boxShadow: '7px 7px 7px #94949469, -7px -7px 7px #94949423',
+    },
   },
-  actionsContainer: {
-    marginBottom: theme.spacing(4),
+
+  slider: {
+    color: '#fb8b24',
+  },
+
+  IconButton: {
+    padding: 5,
+    margin: 10,
   },
 }));
 
 function SecondStep() {
+  const { numberOfGroups } = useSelector((state) => state.teams);
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const [number, setNumber] = useState(2);
-
-  const handleNumberChange = ({ target: { value } }) => {
+  const handleNumberChange = (e, value) => {
     dispatch(addNumberOfGroups(value));
-    setNumber(value);
   };
 
-  const handleBack = () => {
-    dispatch(setError(''));
-    dispatch(getPrevStep());
+  const handleIncrease = () => {
+    if (numberOfGroups < 6) {
+      dispatch(increaseNumberOfGroupsByOne());
+    }
   };
-
-  const handleNext = () => {
-    try {
-      if (number < 2) {
-        throw new Error('🐵 The number of Groups should be at least 2');
-      }
-      dispatch(addNumberOfGroups(number));
-      dispatch(getNextStep());
-    } catch (error) {
-      dispatch(setError(error.message));
+  const handleDecrease = () => {
+    if (numberOfGroups > 2) {
+      dispatch(decreaseNumberOfGroupsByOne());
     }
   };
 
   return (
     <>
-      <TextField
-        aria-label="number of groups"
-        type="number"
-        variant="outlined"
-        inputProps={{
-          min: 2,
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+          height: '80%',
+          color: '#fb8b24',
         }}
-        value={number}
-        onChange={handleNumberChange}
-      />
+      >
+        <Typography
+          color="textSecondary"
+          variant="h6"
+          component="p"
+          style={{
+            margin: '16px 0 ',
+          }}
+        >
+          Number of Teams
+        </Typography>
+        <Typography variant="h1" component="h2" align="center">
+          {numberOfGroups}
+        </Typography>
+      </div>
 
-      <div className={classes.actionsContainer}>
-        <div>
-          <Button onClick={handleBack} className={classes.button}>
-            Back
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleNext}
-            className={classes.button}
-          >
-            Next
-          </Button>
-        </div>
+      <div className={classes.sliderWrapper}>
+        <IconButton onClick={handleDecrease} className={classes.IconButton}>
+          <ArrowBack />
+        </IconButton>
+
+        <Slider
+          defaultValue={2}
+          valueLabelDisplay="auto"
+          aria-labelledby="discrete-slider"
+          step={1}
+          marks
+          min={2}
+          max={6}
+          className={classes.slider}
+          value={numberOfGroups}
+          onChangeCommitted={handleNumberChange}
+        />
+
+        <IconButton onClick={handleIncrease} className={classes.IconButton}>
+          <ArrowForward />
+        </IconButton>
       </div>
     </>
   );

@@ -1,12 +1,11 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core/styles';
 
 /* redux */
 import { useDispatch, useSelector } from 'react-redux';
-import { getPrevStep } from '../../store/features/stepCounter.feature';
 import FormTeamBoard from '../FormTeamBoard/FormTeamBoard';
+import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -24,10 +23,6 @@ function ThirdStep() {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const handleBack = () => {
-    dispatch(getPrevStep());
-  };
-
   const shuffledPlayers = (players) => {
     const input = [...players];
     const output = input.sort(() => Math.random() - 0.5);
@@ -41,22 +36,16 @@ function ThirdStep() {
   };
   return (
     <>
-      <div className={classes.actionsContainer}>
-        <FormTeamBoard />
-        <div>
-          <Button onClick={handleBack} className={classes.button}>
-            Back
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleFinish}
-            className={classes.button}
-          >
-            Submit
-          </Button>
-        </div>
-      </div>
+      <Typography
+        variant="h5"
+        component="h2"
+        style={{
+          margin: '0 10px',
+        }}
+      >
+        Click and rename teams
+      </Typography>
+      <FormTeamBoard />
     </>
   );
 }

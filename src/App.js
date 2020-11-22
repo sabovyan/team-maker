@@ -4,15 +4,18 @@ import logo from './images/logo.png';
 
 import AddPlayers from './pages/AddPlayers';
 import SplitPlayers from './pages/SplitPlayers';
+import Stepper from './pages/Stepper';
 
 function App() {
   return (
     <>
-      <img width="100" src={logo} alt="logo" />
       <Router>
         <Switch>
           <Route exact path="/">
             <AddPlayers />
+          </Route>
+          <Route exact path="/stepper">
+            <Stepper />
           </Route>
           <Route path="/split">
             <SplitPlayers />

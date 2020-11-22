@@ -17,11 +17,23 @@ import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 
 const useStyles = makeStyles({
   root: {
-    margin: 0,
+    margin: '5px 0',
+    height: 46,
+    padding: 5,
     '& .MuiInputBase-input': {
       padding: 10,
       borderRadius: 5,
     },
+  },
+
+  chip: {
+    height: 46,
+    padding: 5,
+    margin: '5px 0',
+    fontSize: '1.5rem',
+    display: 'grid',
+    gridTemplateColumns: '2fr 10fr',
+    justifyItems: 'start',
   },
 });
 
@@ -51,11 +63,23 @@ function FormTeamBoard() {
     dispatch(setTeamEditStatus(id));
   };
   return (
-    <div>
+    <div
+      style={{
+        display: 'flex',
+        alignContent: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        margin: '10px 0',
+      }}
+    >
       {teams &&
         teams.map(({ isEdit, id, name, draft }) =>
           isEdit ? (
-            <Form key={id} onSubmit={handleTeamInputSubmit(id)}>
+            <Form
+              key={id}
+              onSubmit={handleTeamInputSubmit(id)}
+              style={{ width: '100%' }}
+            >
               <TextField
                 variant="outlined"
                 autoFocus={isEdit ? true : false}
@@ -64,22 +88,20 @@ function FormTeamBoard() {
                 onChange={handleTeamInputEdit(id)}
                 onBlur={handleTeamInputSubmit(id)}
                 className={classes.root}
+                fullWidth
               />
             </Form>
           ) : (
             <Chip
               key={id}
-              size="small"
+              size="medium"
               icon={<EmojiPeopleIcon />}
               label={name}
               onClick={handleEditStatus(id)}
               color="primary"
+              className={classes.chip}
               style={{
                 backgroundColor: selectedColor,
-                height: 36,
-                padding: 5,
-                margin: '5px 0',
-                fontSize: '1rem',
               }}
             />
           )

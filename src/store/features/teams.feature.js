@@ -23,23 +23,48 @@ const { reducer, actions } = createSlice({
     ],
   },
   reducers: {
-    addNumberOfGroups: (state, { payload }) => {
-      const teams = [];
-      if (!state.teams.length) {
-        for (let i = 0; i < payload; i++) {
+    increaseNumberOfGroupsByOne: (state) => {
+      if (state.numberOfGroups < 6) {
+        state.numberOfGroups += 1;
+        state.teams = [];
+
+        for (let i = 0; i < state.numberOfGroups; i++) {
           const name = `team${i + 1}`;
-          teams.push({
+          state.teams.push({
             id: newId(),
             name,
             isEdit: false,
           });
         }
       }
+    },
+    decreaseNumberOfGroupsByOne: (state) => {
+      if (state.numberOfGroups > 2) {
+        state.numberOfGroups -= 1;
+        state.teams = [];
 
-      return {
-        numberOfGroups: payload,
-        teams,
-      };
+        for (let i = 0; i < state.numberOfGroups; i++) {
+          const name = `team${i + 1}`;
+          state.teams.push({
+            id: newId(),
+            name,
+            isEdit: false,
+          });
+        }
+      }
+    },
+
+    addNumberOfGroups: (state, { payload }) => {
+      state.teams = [];
+      state.numberOfGroups = payload;
+      for (let i = 0; i < state.numberOfGroups; i++) {
+        const name = `team${i + 1}`;
+        state.teams.push({
+          id: newId(),
+          name,
+          isEdit: false,
+        });
+      }
     },
 
     setTeamEditStatus: (state, { payload }) => {
@@ -91,4 +116,6 @@ export const {
   setTeamEditStatus,
   SetTeamDraftValueChange,
   setTeamFormSubmit,
+  increaseNumberOfGroupsByOne,
+  decreaseNumberOfGroupsByOne,
 } = actions;
