@@ -73,7 +73,7 @@ function SplitPlayers() {
     return () => {
       clearInterval(timer);
     };
-  }, []);
+  }, [finalTime]);
 
   return (
     <div>

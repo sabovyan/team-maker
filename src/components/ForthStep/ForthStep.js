@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { TextField, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { useDispatch } from 'react-redux';
+import { setMaxScore } from '../../store/features/teams.feature';
 
 const useStyles = makeStyles((theme) => ({
   textField: {
@@ -40,8 +42,10 @@ const useStyles = makeStyles((theme) => ({
 function ForthStep() {
   const classes = useStyles();
   const [score, setScore] = useState('100');
+  const dispatch = useDispatch();
 
   const handleScoreValue = ({ target: { value } }) => {
+    dispatch(setMaxScore(value));
     setScore(value);
   };
 

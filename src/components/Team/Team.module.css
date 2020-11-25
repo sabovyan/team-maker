@@ -1,0 +1,8 @@
+.team {
+  padding: 10px;
+  box-shadow: 0.1px 0.1px 1px #9494948f, -0.1px -0.1px 1px #9494948f;
+  transition: box-shadow 0.1s ease-in-out;
+}
+.team:hover {
+  box-shadow: 7px 7px 7px #94949469, -7px -7px 7px #94949423;
+}

@@ -6,10 +6,6 @@ function splitArrayIntoChunksOfLen(arr, numberOfTeams) {
   const NumberOfTotalPlayers = arr.length;
   const numberOfTeamMates = NumberOfTotalPlayers / numberOfTeams;
   let i = 0;
-  // num = 7 \\ array.length
-  // team = 3
-  // teamMates = 7/3
-  // result = [[], [], []]
 
   while (i < NumberOfTotalPlayers) {
     chunks.push(arr.slice(i, (i += numberOfTeamMates)));
@@ -23,6 +19,7 @@ const { reducer, actions } = createSlice({
   name: 'teams',
   initialState: {
     numberOfGroups: 2,
+    maxScore: 100,
     teams: [
       {
         id: 'bb1',
@@ -111,6 +108,10 @@ const { reducer, actions } = createSlice({
       }
     },
 
+    setMaxScore: (state, { payload }) => {
+      state.maxScore = payload;
+    },
+
     setTeamEditStatus: (state, { payload }) => {
       const teams = state.teams.map((team) =>
         team.id === payload
@@ -155,9 +156,10 @@ const { reducer, actions } = createSlice({
     getPlayersForTeams: (state, { payload }) => {
       const players = [...payload];
       const chunks = splitArrayIntoChunksOfLen(players, state.numberOfGroups);
-      state.teams.map((team, index) => {
-        team.players = chunks[index];
-      });
+      state.teams = state.teams.map((team, index) => ({
+        ...team,
+        players: chunks[index],
+      }));
     },
   },
 });
@@ -171,4 +173,5 @@ export const {
   increaseNumberOfGroupsByOne,
   decreaseNumberOfGroupsByOne,
   getPlayersForTeams,
+  setMaxScore,
 } = actions;

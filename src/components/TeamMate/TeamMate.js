@@ -1,10 +1,13 @@
 import React from 'react';
 import {
   Avatar,
+  Divider,
   ListItem,
   ListItemAvatar,
   ListItemText,
 } from '@material-ui/core';
+import COLORS from '../../constants/colors.constants';
+import SportsEsportsIcon from '@material-ui/icons/SportsEsports';
 
 const nicknames = [
   'Butterbean',
@@ -31,7 +34,7 @@ const nicknames = [
   'Cool Papa',
 ];
 
-function TeamMate({ players }) {
+function TeamMate({ players, index }) {
   const getRandomNumber = (nickNames) => {
     let random = Math.floor(Math.random() * nickNames.length);
 
@@ -41,12 +44,19 @@ function TeamMate({ players }) {
   return players.map((player) => (
     <ListItem key={player.id}>
       <ListItemAvatar>
-        <Avatar>{/* <ImageIcon /> */}</Avatar>
+        <Avatar>
+          <SportsEsportsIcon />
+        </Avatar>
       </ListItemAvatar>
       <ListItemText
         primary={player.name}
         secondary={nicknames[getRandomNumber(nicknames)]}
+        style={{
+          color: COLORS[index],
+          fontWeight: 'bolder',
+        }}
       />
+      <Divider />
     </ListItem>
   ));
 }

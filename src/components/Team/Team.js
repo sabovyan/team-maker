@@ -1,46 +1,90 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
-  Avatar,
+  Box,
+  Divider,
+  LinearProgress,
   List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
   Typography,
+  makeStyles,
 } from '@material-ui/core';
-import COLORS from '../../constants/colors.constants';
+import styles from './Team.module.css';
+
 import TeamMate from '../TeamMate/TeamMate';
 
-function Team({ label, team }) {
-  const [selectedColor, setSelectedColor] = useState('blue');
+const useStyles = (color) =>
+  makeStyles({
+    root: {
+      background: `${color}40`,
+      height: 20,
 
-  const getRandomColor = (colors) => {
-    const random = Math.floor(Math.random() * colors.length);
-    setSelectedColor(colors[random]);
-  };
+      '& .MuiLinearProgress-barColorPrimary': {
+        background: color,
+      },
+    },
+  });
 
-  useEffect(() => {
-    getRandomColor(COLORS);
-  }, []);
+function LinearProgressWithLabel({ color, ...props }) {
+  const classes = useStyles(color)();
   return (
-    <div
-      style={{
-        background: 'lightblue',
-        padding: 10,
-      }}
-    >
+    <Box display="flex" alignItems="center">
+      <Box width="100%" mr={1}>
+        <LinearProgress
+          variant="determinate"
+          {...props}
+          className={classes.root}
+        />
+      </Box>
+      <Box minWidth={35}>
+        <Typography variant="body2" color="textSecondary">{`${Math.round(
+          props.value
+        )}%`}</Typography>
+      </Box>
+    </Box>
+  );
+}
+
+function Team({ team, color, index, maxScore }) {
+  const [score, setScore] = useState(45);
+  return (
+    <div className={styles.team}>
       <Typography
         variant="h2"
         component="h3"
         style={{
           textTransform: 'uppercase',
-          color: selectedColor,
+          color,
         }}
       >
         {team.name}
       </Typography>
+      <Divider />
       <List>
-        <TeamMate players={team.players} />
+        <TeamMate index={index} players={team.players} />
       </List>
+      <Divider />
+      <Typography
+        variant="h4"
+        component="h5"
+        align="center"
+        style={{
+          textTransform: 'uppercase',
+          color,
+        }}
+      >
+        Score
+      </Typography>
+      <Typography
+        variant="h4"
+        component="h5"
+        align="center"
+        style={{
+          textTransform: 'uppercase',
+          color,
+        }}
+      >
+        {score}
+      </Typography>
+      <LinearProgressWithLabel value={(score * maxScore) / 100} color={color} />
     </div>
   );
 }
