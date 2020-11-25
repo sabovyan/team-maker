@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+
+import { useSelector } from 'react-redux';
 import Team from '../Team/Team';
 import styles from './Teams.module.css';
 
-function Teams({ quantity, players }) {
-  // const [team, setTeam] = useState([]);
+function Teams() {
+  const { teams } = useSelector((state) => state.teams);
 
-  useEffect(() => {});
+  console.log(teams);
 
   return (
     <div className={styles.teams}>
-      {Array(quantity)
-        .fill('Team')
-        .map((team, idx) => (
-          <Team key={idx} label={`${team} ${idx + 1}`} team={players} />
-        ))}
+      {teams.map((team) => (
+        <Team team={team} key={team.id} />
+      ))}
     </div>
   );
 }

@@ -1,7 +1,26 @@
-import React from 'react';
-import { Typography } from '@material-ui/core';
+import React, { useEffect, useState } from 'react';
+import {
+  Avatar,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Typography,
+} from '@material-ui/core';
+import COLORS from '../../constants/colors.constants';
+import TeamMate from '../TeamMate/TeamMate';
 
 function Team({ label, team }) {
+  const [selectedColor, setSelectedColor] = useState('blue');
+
+  const getRandomColor = (colors) => {
+    const random = Math.floor(Math.random() * colors.length);
+    setSelectedColor(colors[random]);
+  };
+
+  useEffect(() => {
+    getRandomColor(COLORS);
+  }, []);
   return (
     <div
       style={{
@@ -9,14 +28,19 @@ function Team({ label, team }) {
         padding: 10,
       }}
     >
-      <Typography component="h2" variant="h4" align="center">
-        {label}
+      <Typography
+        variant="h2"
+        component="h3"
+        style={{
+          textTransform: 'uppercase',
+          color: selectedColor,
+        }}
+      >
+        {team.name}
       </Typography>
-      <ul>
-        {team.map((player, idx) => (
-          <li key={player.name}>{player.name}</li>
-        ))}
-      </ul>
+      <List>
+        <TeamMate players={team.players} />
+      </List>
     </div>
   );
 }

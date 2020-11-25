@@ -32,7 +32,7 @@ function SplitPlayers() {
   const [count, setCount] = useState(0);
   const [outerTime] = useState(new Date().getTime());
   const [timing, setTiming] = useState(1000);
-  const [finalTime] = useState(players.length * 1000 * 2);
+  const [finalTime] = useState(4000);
   const [progress, setProgress] = useState(0);
 
   const history = useHistory();

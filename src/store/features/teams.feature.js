@@ -1,12 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit';
 import generateNewId from '../../utils/generateNewId';
 
-function splitArrayIntoChunksOfLen(arr, len) {
-  var chunks = [],
-    i = 0,
-    n = arr.length;
-  while (i < n) {
-    chunks.push(arr.slice(i, (i += len)));
+function splitArrayIntoChunksOfLen(arr, numberOfTeams) {
+  const chunks = [];
+  const NumberOfTotalPlayers = arr.length;
+  const numberOfTeamMates = NumberOfTotalPlayers / numberOfTeams;
+  let i = 0;
+  // num = 7 \\ array.length
+  // team = 3
+  // teamMates = 7/3
+  // result = [[], [], []]
+
+  while (i < NumberOfTotalPlayers) {
+    chunks.push(arr.slice(i, (i += numberOfTeamMates)));
   }
   return chunks;
 }
@@ -23,12 +29,40 @@ const { reducer, actions } = createSlice({
         name: 'team1',
         isEdit: false,
         draft: '',
+        players: [
+          {
+            name: 'Van Gogh',
+            isEdit: false,
+            draft: '',
+            id: 'aa1',
+          },
+          {
+            name: 'Beethoven',
+            isEdit: false,
+            draft: '',
+            id: 'aa2',
+          },
+        ],
       },
       {
         name: 'team2',
         isEdit: false,
         id: 'bb2',
         draft: '',
+        players: [
+          {
+            name: 'Bach',
+            isEdit: false,
+            draft: '',
+            id: 'aa3',
+          },
+          {
+            name: 'Mozart',
+            isEdit: false,
+            draft: '',
+            id: 'aa4',
+          },
+        ],
       },
     ],
   },
