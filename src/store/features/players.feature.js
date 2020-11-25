@@ -1,5 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+// const shuffledPlayers = (players) => {
+//   const input = [...players];
+//   const output = input.sort(() => Math.random() - 0.5);
+//   return output;
+// };
+
 const { actions, reducer } = createSlice({
   name: 'players',
   initialState: [
@@ -59,6 +65,10 @@ const { actions, reducer } = createSlice({
       state.map((player) =>
         player.id === payload.id ? { ...player, draft: payload.value } : player
       ),
+
+    shufflePLayers: (state) => {
+      state = state.sort(() => Math.random() - 0.5);
+    },
   },
 });
 export const {
@@ -67,5 +77,6 @@ export const {
   setEditStatus,
   setPlayerFormSubmit,
   SetDraftValueChange,
+  shufflePLayers,
 } = actions;
 export default reducer;

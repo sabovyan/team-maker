@@ -1,6 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
 import generateNewId from '../../utils/generateNewId';
 
+function splitArrayIntoChunksOfLen(arr, len) {
+  var chunks = [],
+    i = 0,
+    n = arr.length;
+  while (i < n) {
+    chunks.push(arr.slice(i, (i += len)));
+  }
+  return chunks;
+}
+
 const newId = generateNewId();
 
 const { reducer, actions } = createSlice({
@@ -107,6 +117,14 @@ const { reducer, actions } = createSlice({
         teams,
       };
     },
+
+    getPlayersForTeams: (state, { payload }) => {
+      const players = [...payload];
+      const chunks = splitArrayIntoChunksOfLen(players, state.numberOfGroups);
+      state.teams.map((team, index) => {
+        team.players = chunks[index];
+      });
+    },
   },
 });
 
@@ -118,4 +136,5 @@ export const {
   setTeamFormSubmit,
   increaseNumberOfGroupsByOne,
   decreaseNumberOfGroupsByOne,
+  getPlayersForTeams,
 } = actions;
