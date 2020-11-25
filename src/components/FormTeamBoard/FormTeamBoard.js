@@ -6,14 +6,15 @@ import {
   setTeamFormSubmit,
 } from '../../store/features/teams.feature';
 import COLORS from '../../constants/colors.constants';
+
 /* components */
-import PlayerForm from '../PlayerForm/PlayerForm';
 import Form from '../Form/Form';
+
 /* UI */
 import Chip from '@material-ui/core/Chip';
-import { makeStyles } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
+import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles({
   root: {

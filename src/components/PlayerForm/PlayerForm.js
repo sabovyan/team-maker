@@ -1,7 +1,6 @@
 import { makeStyles, TextField } from '@material-ui/core';
 import React from 'react';
 import Form from '../Form/Form';
-import styles from './PlayerForm.module.css';
 import { useDispatch } from 'react-redux';
 import {
   setPlayerFormSubmit,
@@ -35,7 +34,7 @@ function PlayerForm({ player: { id, isEdit, draft } }) {
   return (
     <div>
       <li>
-        <Form onSubmit={handlePlayerInputSubmit(id)} style={styles.form}>
+        <Form onSubmit={handlePlayerInputSubmit(id)}>
           <TextField
             variant="outlined"
             autoFocus={isEdit ? true : false}

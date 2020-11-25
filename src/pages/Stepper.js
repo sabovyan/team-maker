@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
+
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import MobileStepper from '@material-ui/core/MobileStepper';
 import Button from '@material-ui/core/Button';
@@ -7,6 +9,8 @@ import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import FirstStep from '../components/FirstStep/FirstStep';
 import SecondStep from '../components/SecondStep/SecondStep';
 import ThirdStep from '../components/ThirdStep/ThirdStep';
+import ForthStep from '../components/ForthStep/ForthStep';
+import BeforeGameDialog from '../components/BeforeGameDialog/BeforeGameDialog';
 
 const useStyles = makeStyles({
   root: {
@@ -53,7 +57,14 @@ const useStyles = makeStyles({
 export default function DotsMobileStepper() {
   const classes = useStyles();
   const theme = useTheme();
-  const [activeStep, setActiveStep] = React.useState(2);
+  const history = useHistory();
+
+  const [activeStep, setActiveStep] = useState(0);
+  const [open, setOpen] = useState(false);
+
+  const handleCloseDialog = () => {
+    setOpen(false);
+  };
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -61,6 +72,14 @@ export default function DotsMobileStepper() {
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  const handleStart = () => {
+    setOpen(true);
+  };
+
+  const handleConfirmDialog = () => {
+    history.push('/split');
   };
 
   return (
@@ -78,6 +97,8 @@ export default function DotsMobileStepper() {
             <SecondStep />
           ) : activeStep === 2 ? (
             <ThirdStep />
+          ) : activeStep === 3 ? (
+            <ForthStep />
           ) : null}
         </div>
         <MobileStepper
@@ -89,10 +110,12 @@ export default function DotsMobileStepper() {
           nextButton={
             <Button
               size="small"
-              onClick={handleNext}
-              disabled={activeStep === 5}
+              onClick={activeStep !== 3 ? handleNext : handleStart}
+              style={{
+                color: activeStep === 3 ? '#fb8b24' : '#0f4c5c',
+              }}
             >
-              Next
+              {activeStep === 3 ? 'Start' : 'Next'}
               {theme.direction === 'rtl' ? (
                 <KeyboardArrowLeft />
               ) : (
@@ -116,6 +139,11 @@ export default function DotsMobileStepper() {
           }
         />
       </div>
+      <BeforeGameDialog
+        open={open}
+        handleCloseDialog={handleCloseDialog}
+        handleConfirmDialog={handleConfirmDialog}
+      />
     </div>
   );
 }

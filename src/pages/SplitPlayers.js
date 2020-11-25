@@ -1,58 +1,58 @@
-import React /*,  { useCallback, useEffect, useRef, useState } */ from 'react';
-// import Teams from '../components/Teams/Teams';
-// import { useSelector, useDispatch } from 'react-redux';
-// import {
-//   setInitialState,
-//   AddPlayerToTeam,
-// } from '../store/features/team.feature';
+import React, { useCallback, useEffect, useState } from 'react';
+
+import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 function SplitPlayers() {
-  // const { teamMaker, players, numberOfGroups } = useSelector((state) => state);
+  const { players } = useSelector((state) => state);
+  const [value, setValue] = useState(players[0].name);
+
+  const history = useHistory();
+  // const shuffledPlayers = (players) => {
+  //   const input = [...players];
+  //   const output = input.sort(() => Math.random() - 0.5);
+  //   return output;
+  // };
+
+  // const orderedPlayers = shuffledPlayers(players);
 
   // const dispatch = useDispatch();
 
-  // const [value, setValue] = useState(players[0].name);
-  // const [count, setCount] = useState(0);
-  // const [teamIndex, SetTeamIndex] = useState(0);
+  const DisplayPlayersOneByOne = useCallback(
+    (timing, timeToClearInterval, timerID) => {
+      let count = 0;
+      const time = new Date().getTime();
+      return setInterval(() => {
+        const innerTime = new Date().getTime();
 
-  // const DisplayPlayersOneByOne = useCallback(
-  //   (timing) => {
-  //     let timerId;
+        if (innerTime >= time + timeToClearInterval) {
+          clearInterval(timerID);
+          history.push('/game');
+        }
+        if (count >= players.length) {
+          count = 0;
+        }
 
-  //     timerId = setInterval(() => {
-  //       console.log(teamMaker.players.length);
-  //       clearInterval(timerId);
-  //       if (!teamMaker.players.length) {
-  //         console.log(timerId, 'timerId');
-  //       }
+        setValue(players[count].name);
+        count += 1;
+      }, timing);
+    },
+    [players]
+  );
 
-  //       console.log(teamIndex);
-  //       console.log(teamMaker.numberOfGroups);
+  useEffect(() => {
+    let timerId = DisplayPlayersOneByOne(1000, 5000, timerId);
+    clearInterval(timerId);
 
-  //       if (teamMaker.players.length) {
-  //         setValue(teamMaker.players[0].name);
-  //       }
-
-  //       if (teamIndex < 1) {
-  //         dispatch(AddPlayerToTeam(teamIndex));
-  //         SetTeamIndex((state) => state + 1);
-  //       } else {
-  //         SetTeamIndex(0);
-  //         dispatch(AddPlayerToTeam(teamIndex));
-  //       }
-  //     }, timing);
-  //   },
-  //   [dispatch, teamIndex, teamMaker.numberOfGroups, teamMaker.players]
-  // );
-
-  // useEffect(() => {
-  //   DisplayPlayersOneByOne(3000);
-  // }, []);
+    return () => {
+      clearInterval(timerId);
+    };
+  }, [DisplayPlayersOneByOne]);
 
   return (
     <div>
-      {/* <div>{value}</div>
-      <Teams quantity={numberOfGroups} players={teamMaker.players} /> */}
+      <div>{value}</div>
+      {/* <Teams quantity={numberOfGroups} players={players} /> */}
     </div>
   );
 }

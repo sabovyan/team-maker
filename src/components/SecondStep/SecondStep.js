@@ -1,26 +1,20 @@
-import React, { useState } from 'react';
-/* UI */
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/core/styles';
+import React from 'react';
 
-/* components */
-import FormTeamBoard from '../FormTeamBoard/FormTeamBoard';
+/* UI */
+import ArrowBack from '@material-ui/icons/ArrowBack';
+import ArrowForward from '@material-ui/icons/ArrowForward';
+import Typography from '@material-ui/core/Typography';
+import Slider from '@material-ui/core/Slider';
+import IconButton from '@material-ui/core/IconButton';
+import { makeStyles } from '@material-ui/core/styles';
 
 /* redux */
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  getNextStep,
-  getPrevStep,
-} from '../../store/features/stepCounter.feature';
-import { setError } from '../../store/features/Error.feature';
 import {
   addNumberOfGroups,
   decreaseNumberOfGroupsByOne,
   increaseNumberOfGroupsByOne,
 } from '../../store/features/teams.feature';
-import { IconButton, Slider, Typography } from '@material-ui/core';
-import { ArrowBack, ArrowForward } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
   sliderWrapper: {

@@ -84,7 +84,6 @@ function FirstStep() {
           value={player}
           fullWidth
           className={classes.textField}
-          style={{}}
         />
       </Form>
       <Screen />
