@@ -1,0 +1,23 @@
+.sliderWrapper {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 5px 5px 5px #94949469, -5px -5px 5px #94949423;
+  transition: box-shadow 0.1s ease-in-out;
+  border-radius: 8px;
+  padding: 5px;
+}
+
+.sliderWrapper:hover {
+  box-shadow: 7px 7px 7px 3px #94949469, -7px -7px 7px #94949423;
+}
+
+.display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 80%;
+  color: #fb8b24;
+}

@@ -3,44 +3,12 @@ import { TextField, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch } from 'react-redux';
 import { setMaxScore } from '../../store/features/teams.feature';
+import Title from '../Title/Title';
 
-const useStyles = makeStyles((theme) => ({
-  textField: {
-    '& .MuiInputBase-input': {
-      border: 'none',
-      borderRadius: 4,
-      transition: 'box-shadow 0.1s ease-in-out',
-      boxShadow: '0.1px 0.1px 1px #9494948f, -0.1px -0.1px 1px #9494948f',
-    },
-    '& .MuiInputBase-input:focus': {
-      border: 'none',
-      boxShadow: '7px 7px 7px #94949469, -7px -7px 7px #94949423',
-    },
-    '& .MuiInputBase-input:hover': {
-      border: 'none',
-      boxShadow: '7px 7px 7px #94949469, -7px -7px 7px #94949423',
-    },
-
-    '& .MuiOutlinedInput-root': {
-      border: 'none',
-    },
-
-    '& .MuiInputBase-root:hover': {
-      border: 'none',
-    },
-    '& .MuiOutlinedInput-notchedOutline': {
-      border: 'none',
-    },
-
-    '& .PrivateNotchedOutline-legendNotched-7': {
-      background: 'white',
-      color: '#0f4c5c',
-    },
-  },
-}));
+import useStyles from '../../styles/textField.style';
 
 function ForthStep() {
-  const classes = useStyles();
+  const classes = useStyles('#FB8B24')();
   const [score, setScore] = useState('100');
   const dispatch = useDispatch();
 
@@ -50,25 +18,49 @@ function ForthStep() {
   };
 
   return (
-    <div>
-      <Typography
-        color="textSecondary"
-        variant="h4"
-        component="h2"
+    <div
+      style={{
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <div
         style={{
-          margin: '1rem 0',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: '1rem',
         }}
       >
-        Set max Score for game
-      </Typography>
-      <TextField
-        type="number"
-        variant="outlined"
-        value={score}
-        onChange={handleScoreValue}
-        fullWidth
-        className={classes.textField}
-      />
+        <Typography
+          color="textSecondary"
+          variant="h5"
+          component="span"
+          style={{
+            boxShadow: '5px 5px 5px #94949469, -5px -5px 5px #94949423',
+            padding: 13,
+            borderRadius: 7,
+          }}
+          align="center"
+        >
+          Set max Score for game
+        </Typography>
+
+        <TextField
+          type="number"
+          variant="outlined"
+          value={score}
+          onChange={handleScoreValue}
+          className={classes.textField}
+          fullWidth
+          style={{
+            height: '100%',
+          }}
+        />
+      </div>
     </div>
   );
 }

@@ -6,11 +6,13 @@ import MobileStepper from '@material-ui/core/MobileStepper';
 import Button from '@material-ui/core/Button';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
-import FirstStep from '../components/FirstStep/FirstStep';
-import SecondStep from '../components/SecondStep/SecondStep';
-import ThirdStep from '../components/ThirdStep/ThirdStep';
-import ForthStep from '../components/ForthStep/ForthStep';
-import BeforeGameDialog from '../components/BeforeGameDialog/BeforeGameDialog';
+import FirstStep from '../../components/FirstStep/FirstStep';
+import SecondStep from '../../components/SecondStep/SecondStep';
+import ThirdStep from '../../components/ThirdStep/ThirdStep';
+import ForthStep from '../../components/ForthStep/ForthStep';
+import BeforeGameDialog from '../../components/BeforeGameDialog/BeforeGameDialog';
+
+import styles from './Stepper.module.css';
 
 const useStyles = makeStyles({
   root: {
@@ -19,11 +21,11 @@ const useStyles = makeStyles({
     background: 'white',
     color: 'white',
     borderRadius: 4,
-    boxShadow: '0.1px 0.1px 1px #9494948f, -0.1px -0.1px 1px #9494948f',
+    boxShadow: '5px 5px 5px #94949469, -5px -5px 5px #94949423',
     transition: 'box-shadow 0.1s easy-in-out',
 
     '&:hover': {
-      boxShadow: '7px 7px 7px #94949469, -5px -5px 7px #94949423',
+      boxShadow: '7px 7px 7px 3px #94949469, -7px -7px 7px #94949423',
     },
 
     '& .MuiButtonBase-root': {
@@ -37,21 +39,6 @@ const useStyles = makeStyles({
       background: '#fb8b24',
     },
   },
-
-  container: {
-    margin: 16,
-    display: 'flex',
-    alignItems: 'center',
-    flexDirection: 'column',
-    width: 500,
-  },
-  wrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'column',
-    height: '100vh',
-  },
 });
 
 export default function DotsMobileStepper() {
@@ -59,7 +46,7 @@ export default function DotsMobileStepper() {
   const theme = useTheme();
   const history = useHistory();
 
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(3);
   const [open, setOpen] = useState(false);
 
   const handleCloseDialog = () => {
@@ -83,14 +70,9 @@ export default function DotsMobileStepper() {
   };
 
   return (
-    <div className={classes.wrapper}>
-      <div className={classes.container}>
-        <div
-          style={{
-            height: 500,
-            width: '100%',
-          }}
-        >
+    <div className={styles.wrapper}>
+      <div className={styles.container}>
+        <div className={styles.main}>
           {activeStep === 0 ? (
             <FirstStep />
           ) : activeStep === 1 ? (

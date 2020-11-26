@@ -16,23 +16,10 @@ import {
   increaseNumberOfGroupsByOne,
 } from '../../store/features/teams.feature';
 
-const useStyles = makeStyles((theme) => ({
-  sliderWrapper: {
-    width: '100%',
-    display: 'flex',
+import styles from './SecondStep.module.css';
+import Title from '../Title/Title';
 
-    alignItems: 'center',
-    justifyContent: 'center',
-    boxShadow: '0.1px 0.1px 1px #9494948f, -0.1px -0.1px 1px #9494948f',
-    transition: 'box-shadow 0.1s ease-in-out',
-    borderRadius: 8,
-    padding: 8,
-
-    '&:hover': {
-      boxShadow: '7px 7px 7px #94949469, -7px -7px 7px #94949423',
-    },
-  },
-
+const useStyles = makeStyles({
   slider: {
     color: '#fb8b24',
   },
@@ -41,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     padding: 5,
     margin: 10,
   },
-}));
+});
 
 function SecondStep() {
   const { numberOfGroups } = useSelector((state) => state.teams);
@@ -65,32 +52,15 @@ function SecondStep() {
 
   return (
     <>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexDirection: 'column',
-          height: '80%',
-          color: '#fb8b24',
-        }}
-      >
-        <Typography
-          color="textSecondary"
-          variant="h6"
-          component="p"
-          style={{
-            margin: '16px 0 ',
-          }}
-        >
-          Number of Teams
-        </Typography>
+      <div className={styles.display}>
+        <Title title="Number of Teams" />
+
         <Typography variant="h1" component="h2" align="center">
           {numberOfGroups}
         </Typography>
       </div>
 
-      <div className={classes.sliderWrapper}>
+      <div className={styles.sliderWrapper}>
         <IconButton onClick={handleDecrease} className={classes.IconButton}>
           <ArrowBack />
         </IconButton>

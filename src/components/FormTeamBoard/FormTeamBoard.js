@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   setTeamEditStatus,
@@ -15,6 +15,8 @@ import Chip from '@material-ui/core/Chip';
 import TextField from '@material-ui/core/TextField';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 import { makeStyles } from '@material-ui/core/styles';
+
+import styles from './FormTeamBoard.module.css';
 
 const useStyles = makeStyles({
   root: {
@@ -40,18 +42,9 @@ const useStyles = makeStyles({
 
 function FormTeamBoard() {
   const { teams } = useSelector((state) => state.teams);
-  const [selectedColor, setSelectedColor] = useState('');
+
   const classes = useStyles();
   const dispatch = useDispatch();
-
-  const getRandomColor = (colors) => {
-    const random = Math.floor(Math.random() * colors.length);
-    setSelectedColor(colors[random]);
-  };
-
-  useEffect(() => {
-    getRandomColor(COLORS);
-  }, []);
 
   const handleTeamInputSubmit = (id) => () => {
     dispatch(setTeamFormSubmit(id));
@@ -64,17 +57,9 @@ function FormTeamBoard() {
     dispatch(setTeamEditStatus(id));
   };
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignContent: 'center',
-        justifyContent: 'center',
-        flexDirection: 'column',
-        margin: '10px 0',
-      }}
-    >
+    <div className={styles.teamBoard}>
       {teams &&
-        teams.map(({ isEdit, id, name, draft }) =>
+        teams.map(({ isEdit, id, name, draft }, index) =>
           isEdit ? (
             <Form
               key={id}
@@ -102,7 +87,7 @@ function FormTeamBoard() {
               color="primary"
               className={classes.chip}
               style={{
-                backgroundColor: selectedColor,
+                backgroundColor: COLORS[index],
               }}
             />
           )

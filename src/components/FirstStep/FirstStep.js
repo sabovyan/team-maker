@@ -2,52 +2,20 @@ import React, { useState } from 'react';
 import generateNewId from '../../utils/generateNewId';
 import Form from '../Form/Form';
 import Screen from '../Screen/Screen';
-import { makeStyles, TextField } from '@material-ui/core';
+import { TextField } from '@material-ui/core';
+import useStyles from '../../styles/textField.style';
 
 /* redux */
 import { useDispatch } from 'react-redux';
 import { addPlayer } from '../../store/features/players.feature';
 
-const useStyles = makeStyles((theme) => ({
-  textField: {
-    '& .MuiInputBase-input': {
-      border: 'none',
-      borderRadius: 4,
-      transition: 'box-shadow 0.1s ease-in-out',
-      boxShadow: '0.1px 0.1px 1px #9494948f, -0.1px -0.1px 1px #9494948f',
-    },
-    '& .MuiInputBase-input:focus': {
-      border: 'none',
-      boxShadow: '7px 7px 7px #94949469, -7px -7px 7px #94949423',
-    },
-    '& .MuiInputBase-input:hover': {
-      border: 'none',
-      boxShadow: '7px 7px 7px #94949469, -7px -7px 7px #94949423',
-    },
-
-    '& .MuiOutlinedInput-root': {
-      border: 'none',
-    },
-
-    '& .MuiInputBase-root:hover': {
-      border: 'none',
-    },
-    '& .MuiOutlinedInput-notchedOutline': {
-      border: 'none',
-    },
-
-    '& .PrivateNotchedOutline-legendNotched-7': {
-      background: 'white',
-      color: '#0f4c5c',
-    },
-  },
-}));
+import './FirstStep.css';
 
 const newId = generateNewId();
 
 function FirstStep() {
   const dispatch = useDispatch();
-  const classes = useStyles();
+  const classes = useStyles('#FB8B24')();
 
   const [player, setPlayer] = useState('');
 
@@ -70,13 +38,7 @@ function FirstStep() {
 
   return (
     <>
-      <Form
-        onSubmit={handlePlayerFormSubmit}
-        style={{
-          alignSelf: 'flex-start',
-          width: '100%',
-        }}
-      >
+      <Form onSubmit={handlePlayerFormSubmit} className="form" style={{}}>
         <TextField
           onChange={handlePlayerInput}
           label="player's name"
