@@ -46,7 +46,7 @@ export default function DotsMobileStepper() {
   const theme = useTheme();
   const history = useHistory();
 
-  const [activeStep, setActiveStep] = useState(3);
+  const [activeStep, setActiveStep] = useState(0);
   const [open, setOpen] = useState(false);
 
   const handleCloseDialog = () => {

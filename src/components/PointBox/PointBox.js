@@ -5,10 +5,10 @@ import TextField from '@material-ui/core/TextField';
 const useStyles = (color) =>
   makeStyles({
     textField: {
+      maxWidth: 100,
       '& .MuiInputBase-input': {
         border: 'none',
         borderRadius: 4,
-        maxWidth: 100,
         transition: 'box-shadow 0.1s ease-in-out',
         boxShadow: '0.1px 0.1px 1px #9494948f, -0.1px -0.1px 1px #9494948f',
       },

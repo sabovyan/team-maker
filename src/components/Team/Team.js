@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Divider, List, Typography } from '@material-ui/core';
 import styles from './Team.module.css';
 
@@ -8,18 +8,20 @@ import ScoreTracker from '../ScoreTracker/ScoreTracker';
 function Team({ team, color, index, maxScore }) {
   return (
     <div className={styles.team}>
-      <Typography
-        variant="h2"
-        component="h3"
+      <div
         style={{
+          display: 'flex',
+          justifyContent: 'space-between',
           textTransform: 'uppercase',
           color,
           backgroundColor: '#eeeeee',
           padding: 10,
         }}
       >
-        {team.name}
-      </Typography>
+        <Typography variant="h3" component="h3" style={{}}>
+          {team.name}
+        </Typography>
+      </div>
       <Divider />
       <List>
         <TeamMate index={index} players={team.players} />

@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-
-import LinearProgress from '@material-ui/core/LinearProgress';
-import Typography from '@material-ui/core/Typography';
-import FaceIcon from '@material-ui/icons/Face';
-import Box from '@material-ui/core/Box';
-import { Chip } from '@material-ui/core';
-
 import { useSelector, useDispatch } from 'react-redux';
 import { shufflePLayers } from '../store/features/players.feature';
 import { getPlayersForTeams } from '../store/features/teams.feature';
+
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
+
+import COLORS from '../constants/colors.constants';
 
 function LinearProgressWithLabel(props) {
   return (
@@ -48,7 +47,9 @@ function SplitPlayers() {
       } else {
         setCount((count) => count + 1);
       }
-      setTiming((timing) => timing - 100);
+      if (count === Math.floor(players.length / 2)) {
+        setTiming((timing) => timing - 380);
+      }
     }, timing);
 
     if (innerTime >= outerTime + finalTime) {
@@ -76,10 +77,38 @@ function SplitPlayers() {
   }, [finalTime]);
 
   return (
-    <div>
-      <Chip icon={<FaceIcon />} label={value} />
-
-      <LinearProgressWithLabel value={progress} />
+    <div
+      style={{
+        height: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <div
+        style={{
+          width: '280px',
+        }}
+      >
+        <LinearProgressWithLabel value={progress} />
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Typography
+            variant="h2"
+            component="h2"
+            style={{
+              color: COLORS[count],
+            }}
+          >
+            {value}
+          </Typography>
+        </div>
+      </div>
     </div>
   );
 }

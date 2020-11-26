@@ -8,8 +8,6 @@ import styles from './Teams.module.css';
 function Teams() {
   const { teams, maxScore } = useSelector((state) => state.teams);
 
-  console.log(teams);
-
   return (
     <div className={styles.teams}>
       {teams.map((team, index) => (

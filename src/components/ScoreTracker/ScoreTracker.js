@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Typography from '@material-ui/core/Typography';
 import LinearProgressWithLabel from '../LinearProgressWithLabel/LinearProgressWithLabel';
-import styles from './ScoreTracker.module.css';
-import { TextField } from '@material-ui/core';
 import PointBox from '../PointBox/PointBox';
+import { Button } from '@material-ui/core';
+import ResetButton from '../ResetButton/ResetButton';
+
+import styles from './ScoreTracker.module.css';
 
 function ScoreTracker({ maxScore, color }) {
   const [score, setScore] = useState(0);
@@ -15,9 +17,6 @@ function ScoreTracker({ maxScore, color }) {
   const [penalty, setPenalty] = useState(1);
 
   const handleMouseDown = (e) => {
-    console.log(e.target.nodeName);
-    // console.log(e.target.childNodes);
-    // console.log(e.target);
     if (e.target.id === 'back') {
       setDirection('back');
     }
@@ -35,19 +34,29 @@ function ScoreTracker({ maxScore, color }) {
   };
 
   const handleRewardChange = ({ target: { value } }) => {
-    setReward(Number(value));
+    if (value >= 1) {
+      setReward(Number(value));
+    }
   };
 
   const handleScoreIncrement = () => {
-    setScore((score) => (score < maxScore ? Number(score) + reward : 100));
+    setScore((score) => Number(score) + reward);
   };
 
   const handlePenaltyChange = ({ target: { value } }) => {
-    setPenalty(Number(value));
+    if (value >= 1) {
+      setPenalty(Number(value));
+    }
   };
 
   const handleScoreDecrement = () => {
-    setScore((score) => (score > 0 ? Number(score) - penalty : 0));
+    setScore((score) => Number(score) - penalty);
+  };
+
+  const handleReset = () => {
+    setScore(0);
+    setPenalty(1);
+    setReward(1);
   };
 
   useEffect(() => {
@@ -58,11 +67,9 @@ function ScoreTracker({ maxScore, color }) {
       timerId = setTimeout(() => {
         // console.log(outerTime);
         if (direction === 'back') {
-          setScore((score) => (score > 0 ? Number(score) - penalty : 0));
+          setScore((score) => Number(score) - penalty);
         } else {
-          setScore((score) =>
-            score < maxScore ? Number(score) + reward : 100
-          );
+          setScore((score) => Number(score) + reward);
         }
 
         if (innerTime > outerTime + 1000) {
@@ -137,12 +144,7 @@ function ScoreTracker({ maxScore, color }) {
         </button>
       </div>
       <LinearProgressWithLabel value={(score * 100) / maxScore} color={color} />
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-evenly',
-        }}
-      >
+      <div className={styles.scoreController} style={{}}>
         <PointBox
           label="Reward"
           color={color}
@@ -155,6 +157,7 @@ function ScoreTracker({ maxScore, color }) {
           value={penalty}
           onChange={handlePenaltyChange}
         />
+        <ResetButton color={color} onClick={handleReset} />
       </div>
     </div>
   );

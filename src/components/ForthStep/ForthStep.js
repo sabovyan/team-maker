@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch } from 'react-redux';
 import { setMaxScore } from '../../store/features/teams.feature';
-import Title from '../Title/Title';
 
 import useStyles from '../../styles/textField.style';
 
