@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Game from './pages/Game';
 
 import SplitPlayers from './pages/SplitPlayers';
-import Stepper from './pages/Stepper';
+import Stepper from './pages/Stepper/Stepper';
 
 function App() {
   return (
