@@ -3,7 +3,11 @@ import Teams from '../components/Teams/Teams';
 
 function Game() {
   return (
-    <div>
+    <div
+      style={{
+        padding: 16,
+      }}
+    >
       <Teams />
     </div>
   );

@@ -1,7 +1,14 @@
 .teams {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  grid-template-rows: repeat(auto-fill, minmax(500px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-rows: repeat(auto-fill, minmax(550px, 1fr));
   gap: 1rem;
   padding: 1rem;
+}
+
+@media screen and (max-width: 786px) {
+  .teams {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-rows: repeat(auto-fill, minmax(550px, 1fr));
+  }
 }
