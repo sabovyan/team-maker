@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Typography from '@material-ui/core/Typography';
 import LinearProgressWithLabel from '../LinearProgressWithLabel/LinearProgressWithLabel';
 import PointBox from '../PointBox/PointBox';
-import { Button } from '@material-ui/core';
 import ResetButton from '../ResetButton/ResetButton';
 
 import styles from './ScoreTracker.module.css';

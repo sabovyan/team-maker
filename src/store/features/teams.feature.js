@@ -26,40 +26,14 @@ const { reducer, actions } = createSlice({
         name: 'team1',
         isEdit: false,
         draft: '',
-        players: [
-          {
-            name: 'Van Gogh',
-            isEdit: false,
-            draft: '',
-            id: 'aa1',
-          },
-          {
-            name: 'Beethoven',
-            isEdit: false,
-            draft: '',
-            id: 'aa2',
-          },
-        ],
+        players: [],
       },
       {
         name: 'team2',
         isEdit: false,
         id: 'bb2',
         draft: '',
-        players: [
-          {
-            name: 'Bach',
-            isEdit: false,
-            draft: '',
-            id: 'aa3',
-          },
-          {
-            name: 'Mozart',
-            isEdit: false,
-            draft: '',
-            id: 'aa4',
-          },
-        ],
+        players: [],
       },
     ],
   },
