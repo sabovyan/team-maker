@@ -8,32 +8,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const { actions, reducer } = createSlice({
   name: 'players',
-  initialState: [
-    {
-      name: 'Van Gogh',
-      isEdit: false,
-      draft: '',
-      id: 'aa1',
-    },
-    {
-      name: 'Beethoven',
-      isEdit: false,
-      draft: '',
-      id: 'aa2',
-    },
-    {
-      name: 'Bach',
-      isEdit: false,
-      draft: '',
-      id: 'aa3',
-    },
-    {
-      name: 'Mozart',
-      isEdit: false,
-      draft: '',
-      id: 'aa4',
-    },
-  ],
+  initialState: [],
   reducers: {
     addPlayer: (state, { payload }) => [...state, payload],
 

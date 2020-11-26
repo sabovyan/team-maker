@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import generateNewId from '../../utils/generateNewId';
 import Form from '../Form/Form';
 import Screen from '../Screen/Screen';
-import { TextField } from '@material-ui/core';
+import TextField from '@material-ui/core/TextField';
 import useStyles from '../../styles/textField.style';
 
 /* redux */

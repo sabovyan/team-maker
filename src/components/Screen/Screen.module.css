@@ -1,7 +1,7 @@
 .screen {
   border: 1px solid transparent;
   box-shadow: 5px 5px 5px #94949469, -5px -5px 5px #94949423;
-  min-height: 250px;
+  min-height: 400px;
   border-radius: 5px;
   margin: 1rem 0;
   width: 100%;

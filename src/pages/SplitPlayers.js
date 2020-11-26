@@ -27,7 +27,7 @@ function LinearProgressWithLabel(props) {
 
 function SplitPlayers() {
   const { players } = useSelector((state) => state);
-  const [value, setValue] = useState(players[0].name);
+  const [value, setValue] = useState(() => players.length && players[0].name);
   const [count, setCount] = useState(0);
   const [outerTime] = useState(new Date().getTime());
   const [timing, setTiming] = useState(1000);
@@ -40,7 +40,7 @@ function SplitPlayers() {
   useEffect(() => {
     const innerTime = new Date().getTime();
     let timerId = setInterval(() => {
-      setValue(players[count].name);
+      setValue(() => players.length && players[count].name);
 
       if (count >= players.length - 1) {
         setCount(0);
