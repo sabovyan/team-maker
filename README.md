@@ -1,5 +1,3 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
 # T-maker
 
 🧩 Open [team-maker.vercel.app](https://team-maker.vercel.app/) to view it in the browser.
