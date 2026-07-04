@@ -1,11 +1,16 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { create } from 'zustand';
 
-import reducer from './features';
+import type { Player, TeamsState } from '../types';
+import { initialTeamsState } from './features/teams.feature';
 
-const store = configureStore({ reducer });
+export type AppState = {
+  players: Player[];
+  teams: TeamsState;
+};
 
-export type AppStore = typeof store;
-export type RootState = ReturnType<AppStore['getState']>;
-export type AppDispatch = AppStore['dispatch'];
+export type AppAction = (state: AppState) => AppState | Partial<AppState>;
 
-export default store;
+export const useAppStore = create<AppState>(() => ({
+  players: [],
+  teams: initialTeamsState,
+}));

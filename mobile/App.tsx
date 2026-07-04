@@ -5,17 +5,19 @@ import {
   Modal,
   Platform,
   Pressable,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native';
-import { Provider } from 'react-redux';
+import {
+  SafeAreaProvider,
+  SafeAreaView,
+  initialWindowMetrics,
+} from 'react-native-safe-area-context';
 
 import { getColorByIndex } from './src/constants/colors';
-import store from './src/store';
 import { useAppDispatch, useAppSelector } from './src/store/hooks';
 import {
   addPlayer,
@@ -154,23 +156,10 @@ function SetupScreen({ onStart }: SetupScreenProps) {
   return (
     <View style={styles.screenContainer}>
       <View style={styles.heroBlock}>
-        <Text style={styles.eyebrow}>Expo Mobile Port</Text>
         <Text style={styles.heroTitle}>Team Maker</Text>
-        <Text style={styles.heroSubtitle}>
-          Same team-building flow, rebuilt with native components for iOS and Android.
-        </Text>
       </View>
 
       <View style={styles.card}>
-        <View style={styles.stepDots}>
-          {[0, 1, 2, 3].map((index) => (
-            <View
-              key={index}
-              style={[styles.stepDot, activeStep === index ? styles.stepDotActive : null]}
-            />
-          ))}
-        </View>
-
         <View style={styles.stepBody}>{stepContent[activeStep] ?? null}</View>
 
         <View style={styles.stepActions}>
@@ -191,6 +180,14 @@ function SetupScreen({ onStart }: SetupScreenProps) {
               }
             }}
           />
+        </View>
+        <View style={styles.stepDots}>
+          {[0, 1, 2, 3].map((index) => (
+            <View
+              key={index}
+              style={[styles.stepDot, activeStep === index ? styles.stepDotActive : null]}
+            />
+          ))}
         </View>
       </View>
 
@@ -233,7 +230,7 @@ function PlayersStep() {
     <View style={styles.stepSection}>
       <Text style={styles.sectionTitle}>Add players</Text>
       <Text style={styles.sectionHint}>
-        Tap a player to rename them. Remove anyone with the small delete action.
+        Tap a player to rename them. Remove anyone with the delete icon.
       </Text>
 
       <View style={styles.rowGap}>
@@ -246,7 +243,13 @@ function PlayersStep() {
           returnKeyType="done"
           onSubmitEditing={handleAddPlayer}
         />
-        <PrimaryButton label="Add" onPress={handleAddPlayer} />
+        <Pressable
+          accessibilityLabel="Add player"
+          style={({ pressed }) => [styles.addIconButton, pressed ? styles.buttonPressed : null]}
+          onPress={handleAddPlayer}
+        >
+          <Text style={styles.addIconButtonText}>+</Text>
+        </Pressable>
       </View>
 
       <ScrollView style={styles.list} contentContainerStyle={styles.listContent}>
@@ -286,8 +289,12 @@ function PlayerRow({ player, color }: PlayerRowProps) {
       <Pressable style={styles.pillLabelWrap} onPress={() => dispatch(setEditStatus(player.id))}>
         <Text style={styles.pillLabel}>{player.name}</Text>
       </Pressable>
-      <Pressable style={styles.pillDelete} onPress={() => dispatch(removePlayer(player.id))}>
-        <Text style={styles.pillDeleteText}>Delete</Text>
+      <Pressable
+        accessibilityLabel={`Delete ${player.name}`}
+        style={styles.pillDelete}
+        onPress={() => dispatch(removePlayer(player.id))}
+      >
+        <Text style={styles.pillDeleteText}>x</Text>
       </Pressable>
     </View>
   );
@@ -737,9 +744,9 @@ function PrimaryButton({ label, onPress, variant = 'solid', disabled = false }: 
 
 export default function App() {
   return (
-    <Provider store={store}>
+    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
       <AppContent />
-    </Provider>
+    </SafeAreaProvider>
   );
 }
 
@@ -771,6 +778,7 @@ const styles = StyleSheet.create({
     color: '#0f4c5c',
     fontSize: 34,
     fontWeight: '800',
+    textAlign: 'center',
   },
   heroSubtitle: {
     color: '#4f6770',
@@ -792,7 +800,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 10,
-    marginBottom: 18,
+    marginTop: 18,
   },
   stepDot: {
     width: 10,
@@ -827,11 +835,13 @@ const styles = StyleSheet.create({
     color: '#0f4c5c',
     fontSize: 24,
     fontWeight: '800',
+    textAlign: 'center',
   },
   sectionHint: {
     color: '#698089',
     fontSize: 14,
     lineHeight: 20,
+    textAlign: 'center',
   },
   sectionHintCentered: {
     color: '#698089',
@@ -840,9 +850,26 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   rowGap: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 10,
   },
+  addIconButton: {
+    width: 52,
+    height: 52,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fb8b24',
+  },
+  addIconButtonText: {
+    color: '#ffffff',
+    fontSize: 30,
+    fontWeight: '800',
+    lineHeight: 32,
+  },
   textInput: {
+    flex: 1,
     borderWidth: 1,
     borderColor: '#d6e1e6',
     borderRadius: 16,
@@ -899,8 +926,9 @@ const styles = StyleSheet.create({
   },
   pillDeleteText: {
     color: '#ffffff',
-    fontSize: 12,
+    fontSize: 18,
     fontWeight: '700',
+    lineHeight: 18,
   },
   countCard: {
     alignSelf: 'center',

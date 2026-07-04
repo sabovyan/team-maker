@@ -1,7 +1,6 @@
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-
 import type { Player, Team, TeamsState } from '../../types';
 import generateNewId from '../../utils/generateNewId';
+import type { AppAction } from '../index';
 
 function splitArrayIntoChunksOfLen(players: Player[], numberOfTeams: number): Player[][] {
   const chunks: Player[][] = [];
@@ -38,103 +37,108 @@ function createTeams(numberOfGroups: number, createId: () => string): Team[] {
 
 const newId = generateNewId();
 
-const initialState: TeamsState = {
+export const initialTeamsState: TeamsState = {
   numberOfGroups: 2,
   maxScore: 100,
   teams: [createTeam('bb1', 'team1'), createTeam('bb2', 'team2')],
 };
 
-const { reducer, actions } = createSlice({
-  name: 'teams',
-  initialState,
-  reducers: {
-    increaseNumberOfGroupsByOne: (state) => {
-      if (state.numberOfGroups < 6) {
-        state.numberOfGroups += 1;
-        state.teams = createTeams(state.numberOfGroups, newId);
-      }
+export const increaseNumberOfGroupsByOne = (): AppAction => (state) => {
+  if (state.teams.numberOfGroups >= 6) {
+    return state;
+  }
+
+  const numberOfGroups = state.teams.numberOfGroups + 1;
+
+  return {
+    teams: {
+      ...state.teams,
+      numberOfGroups,
+      teams: createTeams(numberOfGroups, newId),
     },
+  };
+};
 
-    decreaseNumberOfGroupsByOne: (state) => {
-      if (state.numberOfGroups > 2) {
-        state.numberOfGroups -= 1;
-        state.teams = createTeams(state.numberOfGroups, newId);
-      }
+export const decreaseNumberOfGroupsByOne = (): AppAction => (state) => {
+  if (state.teams.numberOfGroups <= 2) {
+    return state;
+  }
+
+  const numberOfGroups = state.teams.numberOfGroups - 1;
+
+  return {
+    teams: {
+      ...state.teams,
+      numberOfGroups,
+      teams: createTeams(numberOfGroups, newId),
     },
+  };
+};
 
-    addNumberOfGroups: (state, { payload }: PayloadAction<number>) => {
-      state.numberOfGroups = payload;
-      state.teams = createTeams(state.numberOfGroups, newId);
-    },
-
-    setMaxScore: (state, { payload }: PayloadAction<TeamsState['maxScore']>) => {
-      state.maxScore = payload;
-    },
-
-    setTeamEditStatus: (state, { payload }: PayloadAction<Team['id']>) => {
-      const teams = state.teams.map((team) =>
-        team.id === payload ? { ...team, isEdit: !team.isEdit, draft: team.name } : team
-      );
-
-      return {
-        ...state,
-        teams,
-      };
-    },
-
-    SetTeamDraftValueChange: (
-      state,
-      { payload }: PayloadAction<{ id: Team['id']; value: string }>
-    ) => {
-      const teams = state.teams.map((team) =>
-        team.id === payload.id ? { ...team, draft: payload.value } : team
-      );
-
-      return {
-        ...state,
-        teams,
-      };
-    },
-
-    setTeamFormSubmit: (state, { payload }: PayloadAction<Team['id']>) => {
-      const teams = state.teams.map((team) => {
-        if (team.id === payload) {
-          if (team.draft.trim() === '') {
-            return { ...team, isEdit: !team.isEdit };
-          }
-
-          return { ...team, name: team.draft, isEdit: !team.isEdit };
-        }
-
-        return team;
-      });
-
-      return {
-        ...state,
-        teams,
-      };
-    },
-
-    getPlayersForTeams: (state, { payload }: PayloadAction<Player[]>) => {
-      const players = [...payload];
-      const chunks = splitArrayIntoChunksOfLen(players, state.numberOfGroups);
-      state.teams = state.teams.map((team, index) => ({
-        ...team,
-        players: chunks[index] ?? [],
-      }));
-    },
+export const addNumberOfGroups = (payload: number): AppAction => (state) => ({
+  teams: {
+    ...state.teams,
+    numberOfGroups: payload,
+    teams: createTeams(payload, newId),
   },
 });
 
-export const {
-  addNumberOfGroups,
-  setTeamEditStatus,
-  SetTeamDraftValueChange,
-  setTeamFormSubmit,
-  increaseNumberOfGroupsByOne,
-  decreaseNumberOfGroupsByOne,
-  getPlayersForTeams,
-  setMaxScore,
-} = actions;
+export const setMaxScore = (payload: TeamsState['maxScore']): AppAction => (state) => ({
+  teams: {
+    ...state.teams,
+    maxScore: payload,
+  },
+});
 
-export default reducer;
+export const setTeamEditStatus = (payload: Team['id']): AppAction => (state) => ({
+  teams: {
+    ...state.teams,
+    teams: state.teams.teams.map((team) =>
+      team.id === payload ? { ...team, isEdit: !team.isEdit, draft: team.name } : team
+    ),
+  },
+});
+
+export const SetTeamDraftValueChange = (payload: {
+  id: Team['id'];
+  value: string;
+}): AppAction => (state) => ({
+  teams: {
+    ...state.teams,
+    teams: state.teams.teams.map((team) =>
+      team.id === payload.id ? { ...team, draft: payload.value } : team
+    ),
+  },
+});
+
+export const setTeamFormSubmit = (payload: Team['id']): AppAction => (state) => ({
+  teams: {
+    ...state.teams,
+    teams: state.teams.teams.map((team) => {
+      if (team.id === payload) {
+        if (team.draft.trim() === '') {
+          return { ...team, isEdit: !team.isEdit };
+        }
+
+        return { ...team, name: team.draft, isEdit: !team.isEdit };
+      }
+
+      return team;
+    }),
+  },
+});
+
+export const getPlayersForTeams = (payload: Player[]): AppAction => (state) => {
+  const players = [...payload];
+  const chunks = splitArrayIntoChunksOfLen(players, state.teams.numberOfGroups);
+
+  return {
+    teams: {
+      ...state.teams,
+      teams: state.teams.teams.map((team, index) => ({
+        ...team,
+        players: chunks[index] ?? [],
+      })),
+    },
+  };
+};
