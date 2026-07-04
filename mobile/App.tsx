@@ -1,4 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { useEffect, useMemo, useRef, useState, type ReactElement } from 'react';
 import {
   KeyboardAvoidingView,
@@ -248,7 +249,7 @@ function PlayersStep() {
           style={({ pressed }) => [styles.addIconButton, pressed ? styles.buttonPressed : null]}
           onPress={handleAddPlayer}
         >
-          <Text style={styles.addIconButtonText}>+</Text>
+          <Ionicons name="add" size={28} color="#ffffff" />
         </Pressable>
       </View>
 
@@ -294,7 +295,7 @@ function PlayerRow({ player, color }: PlayerRowProps) {
         style={styles.pillDelete}
         onPress={() => dispatch(removePlayer(player.id))}
       >
-        <Text style={styles.pillDeleteText}>x</Text>
+        <Ionicons name="trash-outline" size={16} color="#ffffff" />
       </Pressable>
     </View>
   );
@@ -862,12 +863,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#fb8b24',
   },
-  addIconButtonText: {
-    color: '#ffffff',
-    fontSize: 30,
-    fontWeight: '800',
-    lineHeight: 32,
-  },
   textInput: {
     flex: 1,
     borderWidth: 1,
@@ -923,12 +918,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 6,
     marginLeft: 12,
-  },
-  pillDeleteText: {
-    color: '#ffffff',
-    fontSize: 18,
-    fontWeight: '700',
-    lineHeight: 18,
   },
   countCard: {
     alignSelf: 'center',
