@@ -198,6 +198,9 @@ export const appStyles = StyleSheet.create({
     justifyContent: 'center',
     gap: 12,
   },
+  groupsChooserWrap: {
+    marginTop: 'auto',
+  },
   segmentRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',

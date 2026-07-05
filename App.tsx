@@ -18,6 +18,7 @@ import {
 } from 'react-native-safe-area-context';
 
 import { getColorByIndex } from './src/constants/colors';
+import SegmentOption from './src/components/SegmentOption';
 import { theme } from './src/constants/theme';
 import Button from './src/components/Button';
 import { useAppDispatch, useAppSelector } from './src/store/hooks';
@@ -30,9 +31,7 @@ import {
 } from './src/store/features/players.feature';
 import {
   addNumberOfGroups,
-  decreaseNumberOfGroupsByOne,
   getPlayersForTeams,
-  increaseNumberOfGroupsByOne,
   setMaxScore,
   setTeamEditStatus,
   setTeamFormSubmit,
@@ -331,41 +330,17 @@ function GroupsStep() {
   return (
     <View style={appStyles.stepSection}>
       <Text style={appStyles.sectionTitle}>Number of teams</Text>
-      <View style={appStyles.segmentRow}>
-        {[2, 3, 4, 5, 6].map((value) => (
-          <Pressable
-            key={value}
-            style={[appStyles.segment, numberOfGroups === value ? appStyles.segmentActive : null]}
-            onPress={() => dispatch(addNumberOfGroups(value))}
-          >
-            <Text
-              style={[
-                appStyles.segmentLabel,
-                numberOfGroups === value ? appStyles.segmentLabelActive : null,
-              ]}
-            >
-              {value}
-            </Text>
-          </Pressable>
-        ))}
-      </View>
-      <View style={appStyles.counterActions}>
-        <Button
-          type="secondary"
-          grow
-          onPress={() => dispatch(decreaseNumberOfGroupsByOne())}
-          disabled={numberOfGroups <= 2}
-        >
-          -
-        </Button>
-        <Button
-          type="secondary"
-          grow
-          onPress={() => dispatch(increaseNumberOfGroupsByOne())}
-          disabled={numberOfGroups >= 6}
-        >
-          +
-        </Button>
+      <View style={appStyles.groupsChooserWrap}>
+        <View style={appStyles.segmentRow}>
+          {[2, 3, 4, 5, 6].map((value) => (
+            <SegmentOption
+              key={value}
+              label={String(value)}
+              selected={numberOfGroups === value}
+              onPress={() => dispatch(addNumberOfGroups(value))}
+            />
+          ))}
+        </View>
       </View>
     </View>
   );
