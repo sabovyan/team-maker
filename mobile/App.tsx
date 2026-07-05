@@ -19,6 +19,7 @@ import {
 } from 'react-native-safe-area-context';
 
 import { getColorByIndex } from './src/constants/colors';
+import { theme } from './src/constants/theme';
 import { useAppDispatch, useAppSelector } from './src/store/hooks';
 import {
   addPlayer,
@@ -64,7 +65,6 @@ type GameScreenProps = {
 
 type PlayerRowProps = {
   player: Player;
-  color: string;
 };
 
 type TeamCardProps = {
@@ -110,6 +110,7 @@ type PrimaryButtonProps = {
 };
 
 const newId = generateNewId();
+const { actions, borders, effects, overlays, progress: progressTheme, surfaces, text } = theme;
 
 function shufflePlayers(players: Player[]): Player[] {
   return [...players].sort(() => Math.random() - 0.5);
@@ -146,6 +147,8 @@ function SetupScreen({ onStart }: SetupScreenProps) {
   const players = useAppSelector((state) => state.players);
   const [activeStep, setActiveStep] = useState(0);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const isBackDisabled = activeStep === 0;
+  const isNextDisabled = activeStep === 3 && players.length === 0;
 
   const stepContent: ReactElement[] = [
     <PlayersStep key="players" />,
@@ -156,32 +159,29 @@ function SetupScreen({ onStart }: SetupScreenProps) {
 
   return (
     <View style={styles.screenContainer}>
-      <View style={styles.heroBlock}>
-        <Text style={styles.heroTitle}>Team Maker</Text>
-      </View>
-
       <View style={styles.card}>
         <View style={styles.stepBody}>{stepContent[activeStep] ?? null}</View>
+      </View>
 
-        <View style={styles.stepActions}>
-          <PrimaryButton
-            label="Back"
-            variant="ghost"
-            disabled={activeStep === 0}
-            onPress={() => setActiveStep((current) => Math.max(0, current - 1))}
+      <View style={styles.setupFooter}>
+        <Pressable
+          accessibilityLabel="Previous step"
+          style={({ pressed }) => [
+            styles.setupNavButton,
+            styles.setupNavButtonGhost,
+            isBackDisabled ? styles.setupNavButtonGhostDisabled : null,
+            pressed && !isBackDisabled ? styles.buttonPressed : null,
+          ]}
+          disabled={isBackDisabled}
+          onPress={() => setActiveStep((current) => Math.max(0, current - 1))}
+        >
+          <Ionicons
+            name="chevron-back"
+            size={22}
+            color={isBackDisabled ? actions.disabledSecondaryText : actions.secondaryText}
           />
-          <PrimaryButton
-            label={activeStep === 3 ? 'Start' : 'Next'}
-            disabled={activeStep === 3 && players.length === 0}
-            onPress={() => {
-              if (activeStep === 3) {
-                setIsModalVisible(true);
-              } else {
-                setActiveStep((current) => Math.min(3, current + 1));
-              }
-            }}
-          />
-        </View>
+        </Pressable>
+
         <View style={styles.stepDots}>
           {[0, 1, 2, 3].map((index) => (
             <View
@@ -190,6 +190,30 @@ function SetupScreen({ onStart }: SetupScreenProps) {
             />
           ))}
         </View>
+
+        <Pressable
+          accessibilityLabel={activeStep === 3 ? 'Start game' : 'Next step'}
+          style={({ pressed }) => [
+            styles.setupNavButton,
+            styles.setupNavButtonSolid,
+            isNextDisabled ? styles.setupNavButtonSolidDisabled : null,
+            pressed && !isNextDisabled ? styles.buttonPressed : null,
+          ]}
+          disabled={isNextDisabled}
+          onPress={() => {
+            if (activeStep === 3) {
+              setIsModalVisible(true);
+            } else {
+              setActiveStep((current) => Math.min(3, current + 1));
+            }
+          }}
+        >
+          <Ionicons
+            name="chevron-forward"
+            size={22}
+            color={isNextDisabled ? actions.disabledPrimaryText : actions.primaryText}
+          />
+        </Pressable>
       </View>
 
       <ConfirmStartModal
@@ -208,11 +232,19 @@ function PlayersStep() {
   const players = useAppSelector((state) => state.players);
   const dispatch = useAppDispatch();
   const [playerName, setPlayerName] = useState('');
+  const playerNameInputRef = useRef<TextInput>(null);
+
+  const focusPlayerNameInput = () => {
+    requestAnimationFrame(() => {
+      playerNameInputRef.current?.focus();
+    });
+  };
 
   const handleAddPlayer = () => {
     const normalizedName = playerName.trim();
 
     if (!normalizedName) {
+      focusPlayerNameInput();
       return;
     }
 
@@ -225,6 +257,7 @@ function PlayersStep() {
       })
     );
     setPlayerName('');
+    focusPlayerNameInput();
   };
 
   return (
@@ -234,14 +267,29 @@ function PlayersStep() {
         Tap a player to rename them. Remove anyone with the delete icon.
       </Text>
 
+      <ScrollView
+        style={styles.list}
+        contentContainerStyle={players.length ? [styles.listContent, styles.playerListContent] : styles.listContent}
+      >
+        {players.length ? (
+          players.map((player) => (
+            <PlayerRow key={player.id} player={player} />
+          ))
+        ) : (
+          <EmptyState text="No players yet. Add a few names to build teams." />
+        )}
+      </ScrollView>
+
       <View style={styles.rowGap}>
         <TextInput
+          ref={playerNameInputRef}
           value={playerName}
           onChangeText={setPlayerName}
           placeholder="Player name"
-          placeholderTextColor="#82939a"
+          placeholderTextColor={text.placeholder}
           style={styles.textInput}
           returnKeyType="done"
+          submitBehavior="submit"
           onSubmitEditing={handleAddPlayer}
         />
         <Pressable
@@ -249,35 +297,25 @@ function PlayersStep() {
           style={({ pressed }) => [styles.addIconButton, pressed ? styles.buttonPressed : null]}
           onPress={handleAddPlayer}
         >
-          <Ionicons name="add" size={28} color="#ffffff" />
+          <Ionicons name="add" size={28} color={actions.primaryText} />
         </Pressable>
       </View>
-
-      <ScrollView style={styles.list} contentContainerStyle={styles.listContent}>
-        {players.length ? (
-          players.map((player, index) => (
-            <PlayerRow key={player.id} player={player} color={getColorByIndex(index)} />
-          ))
-        ) : (
-          <EmptyState text="No players yet. Add a few names to build teams." />
-        )}
-      </ScrollView>
     </View>
   );
 }
 
-function PlayerRow({ player, color }: PlayerRowProps) {
+function PlayerRow({ player }: PlayerRowProps) {
   const dispatch = useAppDispatch();
 
   if (player.isEdit) {
     return (
-      <View style={styles.inlineEditorRow}>
+      <View style={[styles.inlineEditorRow, styles.playerInlineEditorRow]}>
         <TextInput
           value={player.draft}
           onChangeText={(value) => dispatch(SetDraftValueChange({ id: player.id, value }))}
           autoFocus
           placeholder="Player name"
-          placeholderTextColor="#82939a"
+          placeholderTextColor={text.placeholder}
           style={styles.inlineInput}
           onEndEditing={() => dispatch(setPlayerFormSubmit(player.id))}
         />
@@ -286,7 +324,7 @@ function PlayerRow({ player, color }: PlayerRowProps) {
   }
 
   return (
-    <View style={[styles.pillRow, { backgroundColor: color }]}>
+    <View style={styles.pillRow}>
       <Pressable style={styles.pillLabelWrap} onPress={() => dispatch(setEditStatus(player.id))}>
         <Text style={styles.pillLabel}>{player.name}</Text>
       </Pressable>
@@ -295,7 +333,7 @@ function PlayerRow({ player, color }: PlayerRowProps) {
         style={styles.pillDelete}
         onPress={() => dispatch(removePlayer(player.id))}
       >
-        <Ionicons name="trash-outline" size={16} color="#ffffff" />
+        <Ionicons name="trash-outline" size={16} color={text.input} />
       </Pressable>
     </View>
   );
@@ -308,27 +346,6 @@ function GroupsStep() {
   return (
     <View style={styles.stepSection}>
       <Text style={styles.sectionTitle}>Number of teams</Text>
-      <Text style={styles.sectionHint}>Choose between 2 and 6 teams.</Text>
-
-      <View style={styles.countCard}>
-        <Text style={styles.countText}>{numberOfGroups}</Text>
-      </View>
-
-      <View style={styles.counterActions}>
-        <PrimaryButton
-          label="-"
-          variant="ghost"
-          onPress={() => dispatch(decreaseNumberOfGroupsByOne())}
-          disabled={numberOfGroups <= 2}
-        />
-        <PrimaryButton
-          label="+"
-          variant="ghost"
-          onPress={() => dispatch(increaseNumberOfGroupsByOne())}
-          disabled={numberOfGroups >= 6}
-        />
-      </View>
-
       <View style={styles.segmentRow}>
         {[2, 3, 4, 5, 6].map((value) => (
           <Pressable
@@ -346,6 +363,20 @@ function GroupsStep() {
             </Text>
           </Pressable>
         ))}
+      </View>
+      <View style={styles.counterActions}>
+        <PrimaryButton
+          label="-"
+          variant="ghost"
+          onPress={() => dispatch(decreaseNumberOfGroupsByOne())}
+          disabled={numberOfGroups <= 2}
+        />
+        <PrimaryButton
+          label="+"
+          variant="ghost"
+          onPress={() => dispatch(increaseNumberOfGroupsByOne())}
+          disabled={numberOfGroups >= 6}
+        />
       </View>
     </View>
   );
@@ -371,7 +402,7 @@ function TeamsStep() {
                 }
                 autoFocus
                 placeholder="Team name"
-                placeholderTextColor="#82939a"
+                placeholderTextColor={text.placeholder}
                 style={styles.inlineInput}
                 onEndEditing={() => dispatch(setTeamFormSubmit(team.id))}
               />
@@ -379,10 +410,18 @@ function TeamsStep() {
           ) : (
             <Pressable
               key={team.id}
-              style={[styles.teamNameChip, { backgroundColor: getColorByIndex(index) }]}
+              style={[
+                styles.teamNameChip,
+                {
+                  backgroundColor: `${getColorByIndex(index)}1a`,
+                  borderColor: `${getColorByIndex(index)}33`,
+                },
+              ]}
               onPress={() => dispatch(setTeamEditStatus(team.id))}
             >
-              <Text style={styles.teamNameChipText}>{team.name}</Text>
+              <Text style={[styles.teamNameChipText, { color: getColorByIndex(index) }]}>
+                {team.name}
+              </Text>
             </Pressable>
           )
         )}
@@ -411,7 +450,7 @@ function ScoreStep() {
         }}
         keyboardType="number-pad"
         placeholder="100"
-        placeholderTextColor="#82939a"
+        placeholderTextColor={text.placeholder}
         style={styles.scoreInput}
       />
     </View>
@@ -725,7 +764,11 @@ function PrimaryButton({ label, onPress, variant = 'solid', disabled = false }: 
       style={({ pressed }) => [
         styles.button,
         variant === 'ghost' ? styles.buttonGhost : styles.buttonSolid,
-        disabled ? styles.buttonDisabled : null,
+        disabled
+          ? variant === 'ghost'
+            ? styles.buttonGhostDisabled
+            : styles.buttonSolidDisabled
+          : null,
         pressed && !disabled ? styles.buttonPressed : null,
       ]}
       disabled={disabled}
@@ -735,6 +778,11 @@ function PrimaryButton({ label, onPress, variant = 'solid', disabled = false }: 
         style={[
           styles.buttonText,
           variant === 'ghost' ? styles.buttonGhostText : styles.buttonSolidText,
+          disabled
+            ? variant === 'ghost'
+              ? styles.buttonGhostTextDisabled
+              : styles.buttonSolidTextDisabled
+            : null,
         ]}
       >
         {label}
@@ -754,7 +802,7 @@ export default function App() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f4f8fb',
+    backgroundColor: surfaces.surface1,
   },
   keyboardAvoidingView: {
     flex: 1,
@@ -769,58 +817,77 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   eyebrow: {
-    color: '#fb8b24',
+    color: actions.primaryBg,
     fontSize: 13,
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
   heroTitle: {
-    color: '#0f4c5c',
+    color: text.primary,
     fontSize: 34,
     fontWeight: '800',
     textAlign: 'center',
   },
   heroSubtitle: {
-    color: '#4f6770',
+    color: text.muted,
     fontSize: 16,
     lineHeight: 22,
   },
   card: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: surfaces.surface2,
     borderRadius: 24,
     padding: 18,
-    shadowColor: '#0f4c5c',
+    shadowColor: effects.shadowColor,
     shadowOpacity: 0.08,
     shadowRadius: 20,
     shadowOffset: { width: 0, height: 10 },
     elevation: 4,
   },
+  setupFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 16,
+  },
+  setupNavButton: {
+    width: 52,
+    height: 52,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  setupNavButtonGhost: {
+    backgroundColor: actions.secondaryBg,
+  },
+  setupNavButtonSolid: {
+    backgroundColor: actions.primaryBg,
+  },
+  setupNavButtonGhostDisabled: {
+    backgroundColor: actions.disabledSecondaryBg,
+  },
+  setupNavButtonSolidDisabled: {
+    backgroundColor: actions.disabledPrimaryBg,
+  },
   stepDots: {
     flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'center',
     gap: 10,
-    marginTop: 18,
   },
   stepDot: {
     width: 10,
     height: 10,
     borderRadius: 999,
-    backgroundColor: '#d7e0e4',
+    backgroundColor: borders.strong,
   },
   stepDotActive: {
     width: 28,
-    backgroundColor: '#fb8b24',
+    backgroundColor: actions.primaryBg,
   },
   stepBody: {
     flex: 1,
-  },
-  stepActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 12,
-    marginTop: 18,
   },
   stepSection: {
     flex: 1,
@@ -833,19 +900,19 @@ const styles = StyleSheet.create({
     gap: 14,
   },
   sectionTitle: {
-    color: '#0f4c5c',
+    color: text.primary,
     fontSize: 24,
     fontWeight: '800',
     textAlign: 'center',
   },
   sectionHint: {
-    color: '#698089',
+    color: text.secondary,
     fontSize: 14,
     lineHeight: 20,
     textAlign: 'center',
   },
   sectionHintCentered: {
-    color: '#698089',
+    color: text.secondary,
     fontSize: 14,
     lineHeight: 20,
     textAlign: 'center',
@@ -861,17 +928,17 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#fb8b24',
+    backgroundColor: actions.primaryBg,
   },
   textInput: {
     flex: 1,
     borderWidth: 1,
-    borderColor: '#d6e1e6',
+    borderColor: borders.subtle,
     borderRadius: 16,
     paddingHorizontal: 16,
     paddingVertical: 14,
-    color: '#16323f',
-    backgroundColor: '#fbfdfe',
+    color: text.input,
+    backgroundColor: surfaces.surfaceInput,
     fontSize: 16,
   },
   list: {
@@ -881,56 +948,60 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingBottom: 8,
   },
+  playerListContent: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'flex-start',
+  },
   inlineEditorRow: {
-    backgroundColor: '#f5f8fa',
+    backgroundColor: surfaces.surfaceInset,
     borderRadius: 16,
     padding: 8,
   },
+  playerInlineEditorRow: {
+    width: '100%',
+  },
   inlineInput: {
     borderWidth: 1,
-    borderColor: '#d6e1e6',
+    borderColor: borders.subtle,
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 12,
-    color: '#16323f',
+    color: text.input,
     fontSize: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: surfaces.surface2,
   },
   pillRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    alignSelf: 'flex-start',
+    borderWidth: 1,
+    borderColor: borders.subtle,
     borderRadius: 16,
     paddingHorizontal: 14,
     paddingVertical: 12,
+    gap: 10,
+    maxWidth: '100%',
+    backgroundColor: surfaces.surface2,
   },
   pillLabelWrap: {
-    flex: 1,
+    flexShrink: 1,
   },
   pillLabel: {
-    color: '#ffffff',
+    color: text.input,
     fontSize: 16,
     fontWeight: '700',
   },
   pillDelete: {
+    borderWidth: 1,
+    borderColor: borders.muted,
     borderRadius: 999,
-    backgroundColor: 'rgba(255,255,255,0.18)',
+    backgroundColor: surfaces.surface1,
     paddingHorizontal: 10,
     paddingVertical: 6,
-    marginLeft: 12,
-  },
-  countCard: {
-    alignSelf: 'center',
-    width: 120,
-    height: 120,
-    borderRadius: 999,
-    backgroundColor: '#0f4c5c',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 12,
   },
   countText: {
-    color: '#ffffff',
+    color: actions.primaryText,
     fontSize: 44,
     fontWeight: '800',
   },
@@ -948,31 +1019,31 @@ const styles = StyleSheet.create({
   },
   segment: {
     borderWidth: 1,
-    borderColor: '#d6e1e6',
+    borderColor: borders.subtle,
     borderRadius: 999,
     paddingHorizontal: 16,
     paddingVertical: 10,
-    backgroundColor: '#ffffff',
+    backgroundColor: surfaces.surface2,
   },
   segmentActive: {
-    backgroundColor: '#fb8b24',
-    borderColor: '#fb8b24',
+    backgroundColor: actions.primaryBg,
+    borderColor: actions.primaryBg,
   },
   segmentLabel: {
-    color: '#0f4c5c',
+    color: text.primary,
     fontSize: 14,
     fontWeight: '700',
   },
   segmentLabelActive: {
-    color: '#ffffff',
+    color: actions.primaryText,
   },
   teamNameChip: {
+    borderWidth: 1,
     borderRadius: 16,
     paddingHorizontal: 16,
     paddingVertical: 14,
   },
   teamNameChipText: {
-    color: '#ffffff',
     fontSize: 18,
     fontWeight: '700',
     textTransform: 'capitalize',
@@ -981,31 +1052,31 @@ const styles = StyleSheet.create({
     minWidth: 160,
     textAlign: 'center',
     borderWidth: 1,
-    borderColor: '#d6e1e6',
+    borderColor: borders.subtle,
     borderRadius: 18,
     paddingHorizontal: 20,
     paddingVertical: 16,
-    color: '#0f4c5c',
+    color: text.primary,
     fontSize: 28,
     fontWeight: '700',
-    backgroundColor: '#ffffff',
+    backgroundColor: surfaces.surface2,
   },
   modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(10, 27, 36, 0.45)',
+    backgroundColor: overlays.scrim,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 24,
   },
   modalCard: {
     width: '100%',
-    backgroundColor: '#ffffff',
+    backgroundColor: surfaces.surface2,
     borderRadius: 24,
     padding: 20,
     gap: 18,
   },
   modalTitle: {
-    color: '#0f4c5c',
+    color: text.primary,
     fontSize: 22,
     fontWeight: '800',
   },
@@ -1023,11 +1094,11 @@ const styles = StyleSheet.create({
   splitCard: {
     width: '100%',
     maxWidth: 360,
-    backgroundColor: '#ffffff',
+    backgroundColor: surfaces.surface2,
     borderRadius: 28,
     padding: 24,
     gap: 20,
-    shadowColor: '#0f4c5c',
+    shadowColor: effects.shadowColor,
     shadowOpacity: 0.08,
     shadowRadius: 20,
     shadowOffset: { width: 0, height: 10 },
@@ -1053,7 +1124,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   gameTitle: {
-    color: '#0f4c5c',
+    color: text.primary,
     fontSize: 30,
     fontWeight: '800',
   },
@@ -1063,21 +1134,21 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#edf3f5',
+    backgroundColor: actions.secondaryBg,
   },
   gameHeaderButtonPressed: {
     opacity: 0.85,
   },
   gameHeaderButtonText: {
-    color: '#0f4c5c',
+    color: actions.secondaryText,
     fontSize: 14,
     fontWeight: '800',
   },
   teamCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: surfaces.surface2,
     borderRadius: 24,
     overflow: 'hidden',
-    shadowColor: '#0f4c5c',
+    shadowColor: effects.shadowColor,
     shadowOpacity: 0.08,
     shadowRadius: 16,
     shadowOffset: { width: 0, height: 8 },
@@ -1087,7 +1158,7 @@ const styles = StyleSheet.create({
     borderLeftWidth: 6,
     paddingHorizontal: 16,
     paddingVertical: 14,
-    backgroundColor: '#f7f9fa',
+    backgroundColor: surfaces.surfaceHeader,
   },
   teamTitle: {
     fontSize: 24,
@@ -1117,7 +1188,7 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   teamMateName: {
-    color: '#183744',
+    color: text.input,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -1143,13 +1214,13 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#0f4c5c',
+    backgroundColor: actions.primaryBg,
   },
   scoreButtonPressed: {
     opacity: 0.8,
   },
   scoreButtonText: {
-    color: '#ffffff',
+    color: actions.primaryText,
     fontSize: 28,
     fontWeight: '800',
   },
@@ -1173,12 +1244,12 @@ const styles = StyleSheet.create({
   },
   pointInput: {
     borderWidth: 1,
-    borderColor: '#d6e1e6',
+    borderColor: borders.subtle,
     borderRadius: 14,
     paddingHorizontal: 14,
     paddingVertical: 12,
-    color: '#16323f',
-    backgroundColor: '#ffffff',
+    color: text.input,
+    backgroundColor: surfaces.surface2,
   },
   progressWrap: {
     flexDirection: 'row',
@@ -1189,7 +1260,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 18,
     borderRadius: 999,
-    backgroundColor: '#e6edf0',
+    backgroundColor: progressTheme.track,
     overflow: 'hidden',
   },
   progressFill: {
@@ -1198,7 +1269,7 @@ const styles = StyleSheet.create({
   },
   progressLabel: {
     minWidth: 44,
-    color: '#60757d',
+    color: text.secondary,
     fontSize: 13,
     fontWeight: '700',
     textAlign: 'right',
@@ -1207,15 +1278,15 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     borderStyle: 'dashed',
-    borderColor: '#d6e1e6',
+    borderColor: borders.subtle,
     padding: 18,
-    backgroundColor: '#fbfdfe',
+    backgroundColor: surfaces.surfaceInput,
   },
   emptyStateCompact: {
     paddingVertical: 12,
   },
   emptyStateText: {
-    color: '#698089',
+    color: text.secondary,
     fontSize: 14,
     lineHeight: 20,
     textAlign: 'center',
@@ -1229,25 +1300,34 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   buttonSolid: {
-    backgroundColor: '#fb8b24',
+    backgroundColor: actions.primaryBg,
   },
   buttonGhost: {
-    backgroundColor: '#edf3f5',
+    backgroundColor: actions.secondaryBg,
   },
-  buttonDisabled: {
-    opacity: 0.45,
+  buttonSolidDisabled: {
+    backgroundColor: actions.disabledPrimaryBg,
+  },
+  buttonGhostDisabled: {
+    backgroundColor: actions.disabledSecondaryBg,
   },
   buttonPressed: {
-    opacity: 0.85,
+    opacity: actions.pressedOpacity,
   },
   buttonText: {
     fontSize: 16,
     fontWeight: '800',
   },
   buttonSolidText: {
-    color: '#ffffff',
+    color: actions.primaryText,
+  },
+  buttonSolidTextDisabled: {
+    color: actions.disabledPrimaryText,
   },
   buttonGhostText: {
-    color: '#0f4c5c',
+    color: actions.secondaryText,
+  },
+  buttonGhostTextDisabled: {
+    color: actions.disabledSecondaryText,
   },
 });
