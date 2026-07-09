@@ -5,6 +5,9 @@ import { theme } from '../constants/theme';
 const { actions, borders, effects, overlays, progress: progressTheme, surfaces, text } = theme;
 
 export const appStyles = StyleSheet.create({
+  gestureRoot: {
+    flex: 1,
+  },
   safeArea: {
     flex: 1,
     backgroundColor: surfaces.surface1,
@@ -314,121 +317,227 @@ export const appStyles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: 12,
   },
-  gameTitle: {
-    color: text.primary,
-    fontSize: 30,
-    fontWeight: '800',
-  },
   gameHeaderButton: {
     minHeight: 40,
     paddingHorizontal: 14,
     borderRadius: 12,
+  },
+  gameHeaderIconButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+  },
+  gameDrawer: {
+    flex: 1,
   },
   gameHeaderButtonText: {
     color: actions.secondaryText,
     fontSize: 14,
     fontWeight: '800',
   },
+  gameBoardCards: {
+    gap: 16,
+  },
   teamCard: {
     backgroundColor: surfaces.surface2,
     borderRadius: 24,
-    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: borders.subtle,
     shadowColor: effects.shadowColor,
-    shadowOpacity: 0.08,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 3,
+    shadowOpacity: 0.04,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
   },
-  teamHeader: {
-    borderLeftWidth: 6,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    backgroundColor: surfaces.surfaceHeader,
+  teamCardBody: {
+    minHeight: 240,
+    padding: 18,
+    gap: 18,
+  },
+  teamCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
   },
   teamTitle: {
-    fontSize: 24,
+    flex: 1,
+    fontSize: 22,
     fontWeight: '800',
-    textTransform: 'uppercase',
+    textTransform: 'capitalize',
   },
-  teamPlayers: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    gap: 10,
-  },
-  teamMateRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingVertical: 4,
-  },
-  avatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 999,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarText: {
-    fontSize: 16,
-    fontWeight: '800',
-  },
-  teamMateName: {
-    color: text.input,
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  scoreCard: {
-    padding: 16,
-    gap: 16,
-  },
-  scoreTitle: {
-    textAlign: 'center',
-    fontSize: 24,
-    fontWeight: '800',
-    textTransform: 'uppercase',
-  },
-  scoreRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 16,
-  },
-  scoreButton: {
-    width: 54,
-    height: 54,
+  teamCardAddButton: {
+    width: 56,
+    height: 56,
     borderRadius: 16,
   },
-  scoreButtonText: {
-    color: actions.primaryText,
-    fontSize: 28,
+  teamScoreCircle: {
+    alignSelf: 'center',
+    marginTop: 'auto',
+    marginBottom: 'auto',
+  },
+  teamScoreValue: {
+    fontSize: 48,
     fontWeight: '800',
   },
-  scoreValue: {
-    minWidth: 96,
-    textAlign: 'center',
-    fontSize: 32,
-    fontWeight: '800',
+  scoreRouteSafeArea: {
+    flex: 1,
+    backgroundColor: surfaces.surface2,
   },
-  scoreControllers: {
+  scoreRouteKeyboard: {
+    flex: 1,
+  },
+  scoreRouteScroll: {
+    flex: 1,
+  },
+  scoreRouteContent: {
+    flexGrow: 1,
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 28,
+    gap: 24,
+  },
+  scoreRouteHeader: {
+    gap: 8,
+  },
+  scoreRouteTitle: {
+    color: text.primary,
+    fontSize: 16,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+  },
+  scoreModalTeamName: {
+    fontSize: 20,
+    fontWeight: '800',
+    textTransform: 'capitalize',
+  },
+  scoreModalCircle: {
+    alignSelf: 'center',
+  },
+  teamMembersDrawerOverlay: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    backgroundColor: overlays.scrim,
+  },
+  teamMembersDrawerPanel: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: surfaces.surface2,
+    shadowColor: effects.shadowColor,
+    shadowOpacity: 0.12,
+    shadowRadius: 18,
+    shadowOffset: { width: -6, height: 0 },
+    elevation: 12,
+  },
+  teamMembersDrawerSafeArea: {
+    flex: 1,
+    backgroundColor: surfaces.surface2,
+  },
+  teamMembersDrawerScroll: {
+    flex: 1,
+  },
+  teamMembersRouteContent: {
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 28,
+    gap: 24,
+  },
+  teamMembersHeader: {
     flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
     gap: 12,
   },
-  pointInputWrap: {
+  teamMembersHeaderCopy: {
     flex: 1,
     gap: 8,
   },
-  pointLabel: {
+  teamMembersCloseButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+  },
+  teamMembersIntro: {
+    color: text.secondary,
     fontSize: 14,
+    lineHeight: 20,
+  },
+  teamMembersList: {
+    gap: 20,
+  },
+  teamMembersSection: {
+    gap: 12,
+  },
+  teamMembersTeamName: {
+    fontSize: 20,
+    fontWeight: '800',
+    textTransform: 'capitalize',
+  },
+  teamMembersNames: {
+    gap: 10,
+  },
+  teamMemberRow: {
+    borderWidth: 1,
+    borderColor: borders.subtle,
+    borderRadius: 18,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    backgroundColor: surfaces.surfaceInput,
+  },
+  teamMemberName: {
+    color: text.primary,
+    fontSize: 17,
     fontWeight: '700',
   },
-  pointInput: {
+  teamMembersEmptyState: {
+    borderWidth: 1,
+    borderColor: borders.subtle,
+    borderRadius: 18,
+    paddingHorizontal: 16,
+    paddingVertical: 18,
+    backgroundColor: surfaces.surfaceInput,
+  },
+  scoreModalPreview: {
+    opacity: 0.72,
+  },
+  scoreModalActions: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 14,
+  },
+  scoreModalInputWrap: {
+    flex: 1,
+    gap: 8,
+  },
+  scoreModalInput: {
     borderWidth: 1,
     borderColor: borders.subtle,
     borderRadius: 14,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    height: 58,
+    paddingHorizontal: 18,
     color: text.input,
-    backgroundColor: surfaces.surface2,
+    backgroundColor: surfaces.surfaceInput,
+    fontSize: 20,
+    fontWeight: '700',
+    textAlign: 'center',
+  },
+  scoreModalHint: {
+    color: text.secondary,
+    fontSize: 14,
+    lineHeight: 18,
+    textAlign: 'center',
+  },
+  scoreModalSubmitButton: {
+    width: 72,
+    height: 58,
+    borderRadius: 18,
   },
   progressWrap: {
     flexDirection: 'row',

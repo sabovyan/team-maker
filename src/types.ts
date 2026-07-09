@@ -8,6 +8,7 @@ export type Player = {
 export type Team = {
   id: string;
   name: string;
+  score: number;
   isEdit: boolean;
   draft: string;
   players: Player[];

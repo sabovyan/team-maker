@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { useEffect, useMemo, useRef, useState, type ReactElement } from 'react';
+import { router } from 'expo-router';
+import { useEffect, useRef, useState, type ReactElement } from 'react';
 import {
   KeyboardAvoidingView,
   Modal,
@@ -11,14 +12,15 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import {
-  SafeAreaProvider,
-  SafeAreaView,
-  initialWindowMetrics,
-} from 'react-native-safe-area-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider, SafeAreaView, initialWindowMetrics } from 'react-native-safe-area-context';
 
 import { getColorByIndex } from './src/constants/colors';
+import AnimatedNumberText from './src/components/AnimatedNumberText';
+import SideDrawer from './src/components/SideDrawer';
+import ScoreProgressRing from './src/components/ScoreProgressRing';
 import SegmentOption from './src/components/SegmentOption';
+import TeamMembersDrawerContent from './src/components/TeamMembersDrawerContent';
 import { theme } from './src/constants/theme';
 import Button from './src/components/Button';
 import { useAppDispatch, useAppSelector } from './src/store/hooks';
@@ -42,7 +44,6 @@ import generateNewId from './src/utils/generateNewId';
 import { appStyles } from './src/styles/app';
 
 type Screen = 'setup' | 'split' | 'game';
-type HoldDirection = 'back' | 'forward';
 
 type SetupScreenProps = {
   onStart: () => void;
@@ -69,26 +70,7 @@ type PlayerRowProps = {
 type TeamCardProps = {
   team: Team;
   color: string;
-  maxScore: number;
-};
-
-type ScoreTrackerProps = {
-  color: string;
-  maxScore: number;
-};
-
-type ScoreButtonProps = {
-  label: string;
-  onPress: () => void;
-  onPressIn?: () => void;
-  onPressOut?: () => void;
-};
-
-type PointInputProps = {
-  label: string;
-  value: string;
-  onChangeText: (value: string) => void;
-  color: string;
+  maxScore: number | '';
 };
 
 type ProgressBarProps = {
@@ -108,7 +90,7 @@ function shufflePlayers(players: Player[]): Player[] {
   return [...players].sort(() => Math.random() - 0.5);
 }
 
-function AppContent() {
+export function AppContent() {
   const players = useAppSelector((state) => state.players);
   const [screen, setScreen] = useState<Screen>('setup');
 
@@ -496,207 +478,85 @@ function SplitScreen({ onComplete }: SplitScreenProps) {
 }
 
 function GameScreen({ onGoHome }: GameScreenProps) {
-  const { teams, maxScore } = useAppSelector((state) => state.teams);
+  const teams = useAppSelector((state) => state.teams.teams);
+  const maxScore = useAppSelector((state) => state.teams.maxScore);
+  const normalizedMaxScore = typeof maxScore === 'number' && maxScore > 0 ? maxScore : 100;
+  const [isTeamMembersOpen, setIsTeamMembersOpen] = useState(false);
 
   return (
-    <ScrollView style={appStyles.gameScroll} contentContainerStyle={appStyles.gameContent}>
-      <View style={appStyles.gameHeader}>
-        <Text style={appStyles.gameTitle}>Match Board</Text>
-        <Button type="secondary" style={appStyles.gameHeaderButton} textStyle={appStyles.gameHeaderButtonText} onPress={onGoHome}>
-          Home
-        </Button>
-      </View>
-      {teams.map((team, index) => (
-        <TeamCard
-          key={team.id}
-          team={team}
-          color={getColorByIndex(index)}
-          maxScore={Number(maxScore) || 100}
-        />
-      ))}
-    </ScrollView>
+    <SideDrawer
+      open={isTeamMembersOpen}
+      onClose={() => setIsTeamMembersOpen(false)}
+      drawerStyle={appStyles.teamMembersDrawerPanel}
+      overlayStyle={appStyles.teamMembersDrawerOverlay}
+      style={appStyles.gameDrawer}
+      drawerContent={<TeamMembersDrawerContent onClose={() => setIsTeamMembersOpen(false)} />}
+    >
+      <ScrollView style={appStyles.gameScroll} contentContainerStyle={appStyles.gameContent}>
+        <View style={appStyles.gameHeader}>
+          <Button type="secondary" style={appStyles.gameHeaderButton} textStyle={appStyles.gameHeaderButtonText} onPress={onGoHome}>
+            Home
+          </Button>
+
+          <Button
+            type="secondary"
+            style={appStyles.gameHeaderIconButton}
+            accessibilityLabel="Show team members"
+            onPress={() => setIsTeamMembersOpen(true)}
+          >
+            <Ionicons name="information-outline" size={22} color={text.secondary} />
+          </Button>
+        </View>
+
+        <View style={appStyles.gameBoardCards}>
+          {teams.map((team, index) => (
+            <TeamCard
+              key={team.id}
+              team={team}
+              color={getColorByIndex(index)}
+              maxScore={normalizedMaxScore}
+            />
+          ))}
+        </View>
+      </ScrollView>
+    </SideDrawer>
   );
 }
 
 function TeamCard({ team, color, maxScore }: TeamCardProps) {
   return (
     <View style={appStyles.teamCard}>
-      <View style={[appStyles.teamHeader, { borderLeftColor: color }]}>
-        <Text style={[appStyles.teamTitle, { color }]}>{team.name}</Text>
-      </View>
+      <View style={appStyles.teamCardBody}>
+        <View style={appStyles.teamCardHeader}>
+          <Text style={[appStyles.teamTitle, { color }]}>{team.name}</Text>
 
-      <View style={appStyles.teamPlayers}>
-        {team.players.length ? (
-          team.players.map((player) => (
-            <View key={player.id} style={appStyles.teamMateRow}>
-              <View style={[appStyles.avatar, { backgroundColor: `${color}20` }]}>
-                <Text style={[appStyles.avatarText, { color }]}>P</Text>
-              </View>
-              <Text style={appStyles.teamMateName}>{player.name}</Text>
-            </View>
-          ))
-        ) : (
-          <EmptyState text="No players assigned to this team yet." compact />
-        )}
-      </View>
+          <Button
+            type="secondary"
+            style={appStyles.teamCardAddButton}
+            accessibilityLabel={`Add score for ${team.name}`}
+            onPress={() => {
+              router.navigate({
+                pathname: '/score-modal',
+                params: { teamId: team.id },
+              });
+            }}
+          >
+            <Ionicons name="add" size={30} color={text.secondary} />
+          </Button>
+        </View>
 
-      <ScoreTracker color={color} maxScore={maxScore} />
-    </View>
-  );
-}
-
-function ScoreTracker({ color, maxScore }: ScoreTrackerProps) {
-  const [score, setScore] = useState(0);
-  const [reward, setReward] = useState(1);
-  const [penalty, setPenalty] = useState(1);
-  const [holdDirection, setHoldDirection] = useState<HoldDirection | null>(null);
-  const holdStartedAtRef = useRef(0);
-  const repeatTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const progress = useMemo(() => {
-    if (!maxScore) {
-      return 0;
-    }
-
-    return Math.max(0, Math.min(100, (score * 100) / maxScore));
-  }, [maxScore, score]);
-
-  const stopHold = () => {
-    setHoldDirection(null);
-
-    if (repeatTimerRef.current) {
-      clearTimeout(repeatTimerRef.current);
-      repeatTimerRef.current = null;
-    }
-  };
-
-  const applyScoreChange = (direction: HoldDirection) => {
-    setScore((current) => (direction === 'back' ? current - penalty : current + reward));
-  };
-
-  useEffect(() => {
-    if (!holdDirection) {
-      return undefined;
-    }
-
-    const run = () => {
-      const elapsed = Date.now() - holdStartedAtRef.current;
-      let delay = 300;
-
-      if (elapsed > 5000) {
-        delay = 50;
-      } else if (elapsed > 1000) {
-        delay = 100;
-      }
-
-      applyScoreChange(holdDirection);
-      repeatTimerRef.current = setTimeout(run, delay);
-    };
-
-    repeatTimerRef.current = setTimeout(run, 500);
-
-    return () => {
-      if (repeatTimerRef.current) {
-        clearTimeout(repeatTimerRef.current);
-        repeatTimerRef.current = null;
-      }
-    };
-  }, [holdDirection, penalty, reward]);
-
-  return (
-    <View style={appStyles.scoreCard}>
-      <Text style={[appStyles.scoreTitle, { color }]}>Score</Text>
-
-      <View style={appStyles.scoreRow}>
-        <ScoreButton
-          label="-"
-          onPress={() => applyScoreChange('back')}
-          onPressIn={() => {
-            holdStartedAtRef.current = Date.now();
-            setHoldDirection('back');
-          }}
-          onPressOut={stopHold}
-        />
-        <Text style={[appStyles.scoreValue, { color }]}>{score}</Text>
-        <ScoreButton
-          label="+"
-          onPress={() => applyScoreChange('forward')}
-          onPressIn={() => {
-            holdStartedAtRef.current = Date.now();
-            setHoldDirection('forward');
-          }}
-          onPressOut={stopHold}
-        />
-      </View>
-
-      <ProgressBar value={progress} color={color} />
-
-      <View style={appStyles.scoreControllers}>
-        <PointInput
-          label="Reward"
-          value={String(reward)}
+        <ScoreProgressRing
+          value={team.score}
+          maxValue={maxScore}
+          size={154}
+          strokeWidth={8}
           color={color}
-          onChangeText={(value) => {
-            const normalizedValue = value.replace(/[^0-9]/g, '');
-            const nextValue = Number(normalizedValue || 0);
-
-            if (nextValue >= 1) {
-              setReward(nextValue);
-            }
-          }}
-        />
-        <PointInput
-          label="Penalty"
-          value={String(penalty)}
-          color={color}
-          onChangeText={(value) => {
-            const normalizedValue = value.replace(/[^0-9]/g, '');
-            const nextValue = Number(normalizedValue || 0);
-
-            if (nextValue >= 1) {
-              setPenalty(nextValue);
-            }
-          }}
-        />
+          trackColor={theme.borders.subtle}
+          style={appStyles.teamScoreCircle}
+        >
+          <AnimatedNumberText style={[appStyles.teamScoreValue, { color }]} value={team.score} />
+        </ScoreProgressRing>
       </View>
-
-      <Button
-        onPress={() => {
-          setScore(0);
-          setReward(1);
-          setPenalty(1);
-        }}
-      >
-        Reset
-      </Button>
-    </View>
-  );
-}
-
-function ScoreButton({ label, onPress, onPressIn, onPressOut }: ScoreButtonProps) {
-  return (
-    <Button
-      style={appStyles.scoreButton}
-      textStyle={appStyles.scoreButtonText}
-      onPress={onPress}
-      onPressIn={onPressIn}
-      onPressOut={onPressOut}
-    >
-      {label}
-    </Button>
-  );
-}
-
-function PointInput({ label, value, onChangeText, color }: PointInputProps) {
-  return (
-    <View style={appStyles.pointInputWrap}>
-      <Text style={[appStyles.pointLabel, { color }]}>{label}</Text>
-      <TextInput
-        value={value}
-        onChangeText={onChangeText}
-        keyboardType="number-pad"
-        style={appStyles.pointInput}
-      />
     </View>
   );
 }
@@ -724,8 +584,10 @@ function EmptyState({ text, compact = false }: EmptyStateProps) {
 
 export default function App() {
   return (
-    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-      <AppContent />
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={appStyles.gestureRoot}>
+      <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+        <AppContent />
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
